@@ -50,7 +50,7 @@ class AppMenu extends React.Component {
               <FormatListNumberedIcon />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Copy from file name">
+          <Tooltip title="Copy from file names">
             <IconButton className={classes.menuButton} color="inherit" aria-label="Copy">
               <FileCopyIcon />
             </IconButton>

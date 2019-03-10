@@ -12,7 +12,7 @@ const plugins = [
 
 const SRC_DIR = path.resolve(__dirname, '../../src');
 const OUTPUT_DIR = path.resolve(__dirname, '../../dist');
-const defaultInclude = [SRC_DIR];
+const defaultInclude = SRC_DIR;
 
 module.exports = {
   mode: 'production',
@@ -28,7 +28,7 @@ module.exports = {
       {
         test: /\.css$/,
         use: ['style-loader', 'css-loader'],
-        include: defaultInclude,
+        include: [defaultInclude, /flexboxgrid/],
       },
       {
         test: /\.html$/,

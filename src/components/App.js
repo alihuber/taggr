@@ -4,6 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import AppMenu from './AppMenu';
 import StatusBar from './StatusBar';
+import Layout from './Layout';
 
 const styles = {
   root: {
@@ -35,6 +36,7 @@ class App extends React.Component {
       <MuiThemeProvider theme={theme}>
         <div className={classes.root}>
           <AppMenu />
+          <Layout />
           <StatusBar />
         </div>
       </MuiThemeProvider>
