@@ -1,6 +1,5 @@
 // Import parts of electron to use
 const { app, BrowserWindow } = require('electron');
-const path = require('path');
 const url = require('url');
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -26,26 +25,27 @@ function createWindow() {
   if (dev && process.argv.indexOf('--noDevServer') === -1) {
     indexPath = url.format({
       protocol: 'http:',
-      host: 'localhost:3000',
+      host: 'localhost:8080',
       pathname: 'index.html',
       slashes: true,
     });
   } else {
     indexPath = url.format({
       protocol: 'file:',
-      pathname: path.join(__dirname, 'dist', 'index.html'),
+      pathname: __dirname + '/dist/index.html',
       slashes: true,
     });
   }
+
   mainWindow.loadURL(indexPath);
 
   // Don't show until we are ready and loaded
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
     // Open the DevTools automatically if developing
-    if (dev) {
-      mainWindow.webContents.openDevTools();
-    }
+    // if (dev) {
+    //   mainWindow.webContents.openDevTools();
+    // }
   });
 
   // Emitted when the window is closed.

@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "ElectronJS with ReactJS boilerplate",
   "scripts": {
-    "prod": "webpack --config internals/webpack/webpack.prod.js && electron --noDevServer .",
-    "dev": "webpack-dev-server --hot --host 0.0.0.0 --config=./internals/webpack/webpack.dev.js",
-    "build": "webpack --config internals/webpack/webpack.prod.js",
-    "package": "webpack --config internals/webpack/webpack.prod.js",
-    "postpackage": "electron-packager ./ --out=./builds"
+    "prod": "npx rimraf dist && webpack --config=./internals/webpack/webpack.prod.js && electron --noDevServer .",
+    "dev": "npx rimraf dist && webpack-dev-server --hot --host 0.0.0.0 --config=./internals/webpack/webpack.dev.js",
+    "build": "npx rimraf dist && webpack --config=./internals/webpack/webpack.prod.js",
+    "package": "npx rimraf dist && webpack --config=./internals/webpack/webpack.prod.js",
+    "postpackage": "npx rimraf builds && electron-packager ./ ReactApp --out=./builds"
   },
   "main": "main.js",
   "author": "Alexander Huber",
