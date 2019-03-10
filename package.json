@@ -1,5 +1,5 @@
 {
-  "name": "react-boilerplate",
+  "name": "electron-react-boilerplate",
   "version": "1.0.0",
   "description": "ReactJS boilerplate",
   "main": "index.js",
@@ -12,16 +12,18 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@babel/core": "^7.1.2",
-    "@babel/preset-env": "^7.1.0",
+    "@babel/core": "^7.3.4",
+    "@babel/preset-env": "^7.3.4",
     "@babel/preset-react": "^7.0.0",
-    "babel-loader": "^8.0.4",
-    "webpack": "^4.20.2",
-    "webpack-cli": "^3.1.2"
+    "babel-loader": "^8.0.5",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.2.3"
   },
   "dependencies": {
-    "@babel/polyfill": "^7.0.0",
+    "@babel/polyfill": "^7.2.5",
+    "electron": "^4.0.8",
+    "electron-packager": "^13.1.1",
     "html-webpack-plugin": "^3.2.0",
-    "webpack-dev-server": "^3.1.9"
+    "webpack-dev-server": "^3.2.1"
   }
 }
