@@ -1,37 +1,43 @@
 import '../assets/css/App.css';
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import AppMenu from './AppMenu';
+import StatusBar from './StatusBar';
 
 const styles = {
   root: {
     flexGrow: 1,
   },
-  flex: {
-    flexGrow: 1,
-    cursor: 'pointer',
-  },
-  menuButton: {
-    marginLeft: -12,
-    marginRight: 20,
-  },
 };
+
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      light: '#8bf6ff',
+      main: '#4fc3f7',
+      dark: '#0093c4',
+      contrastText: '#ffffff',
+    },
+    secondary: {
+      light: '#ffffff',
+      main: '#fafafa',
+      dark: '#c7c7c7',
+      contrastText: '#ffffff',
+    },
+  },
+});
 
 class App extends React.Component {
   render() {
     const { classes } = this.props;
     return (
-      <div className={classes.root}>
-        <AppBar position="static">
-          <Toolbar>
-            <Typography variant="h6" color="inherit" className={classes.flex}>
-              Home
-            </Typography>
-          </Toolbar>
-        </AppBar>
-      </div>
+      <MuiThemeProvider theme={theme}>
+        <div className={classes.root}>
+          <AppMenu />
+          <StatusBar />
+        </div>
+      </MuiThemeProvider>
     );
   }
 }
