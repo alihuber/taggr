@@ -23,7 +23,6 @@ class Layout extends React.Component {
         <Row center="xs">
           <Col xs={3} sm={3} md={3} lg={3} className={classes.divider}>
             <AttributesInput />
-            <Divider />
             <CoverInput />
           </Col>
           <Col xs={9} sm={9} md={9} lg={9}>
