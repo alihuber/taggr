@@ -10,16 +10,17 @@ const styles = theme => ({
     width: '100%',
   },
   card: {
-    marginTop: 40,
-    minHeight: 150,
+    marginTop: 20,
+    minHeight: 200,
   },
   cardContent: {
     textAlign: 'center',
-    paddingTop: 50,
+    paddingTop: 70,
+    opacity: 0.5,
   },
 });
 
-const MyDropzone = props => {
+const CoverDropzone = props => {
   const onDrop = useCallback(acceptedFiles => {
     const reader = new FileReader();
 
@@ -50,7 +51,7 @@ const MyDropzone = props => {
 class CoverInput extends React.Component {
   render() {
     const { classes } = this.props;
-    return <MyDropzone classes={classes} />;
+    return <CoverDropzone classes={classes} />;
   }
 }
 export default withStyles(styles)(CoverInput);

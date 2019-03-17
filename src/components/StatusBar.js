@@ -23,7 +23,7 @@ class StatusBar extends React.Component {
     const loadedNum = `Songs loaded: ${songsLoaded}`;
     return (
       <BottomNavigation showLabels className={classes.root}>
-        <BottomNavigationAction label={loadedNum} icon={<MusicNoteIcon />} />
+        <BottomNavigationAction label={loadedNum} icon={<MusicNoteIcon />} disabled />
       </BottomNavigation>
     );
   }
