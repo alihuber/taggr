@@ -1,14 +1,16 @@
 {
-  "name": "electron-react-boilerplate",
-  "version": "1.0.0",
+  "name": "Taggr",
+  "version": "0.0.1",
   "description": "ElectronJS with ReactJS boilerplate",
   "scripts": {
     "prod": "npx rimraf dist && webpack --config=./internals/webpack/webpack.prod.js && electron --noDevServer .",
     "dev": "npx rimraf dist && webpack-dev-server --hot --host 0.0.0.0 --config=./internals/webpack/webpack.dev.js",
     "build": "npx rimraf dist && webpack --config=./internals/webpack/webpack.prod.js",
     "package": "npx rimraf dist && webpack --config=./internals/webpack/webpack.prod.js",
-    "postpackage": "npx rimraf builds && electron-packager ./ ReactApp --out=./builds"
+    "postpackage": "npx rimraf builds && electron-packager ./ Taggr --out=./builds",
+    "build-win": "node ./build-win.js"
   },
+  "productName": "Taggr",
   "main": "main.js",
   "author": "Alexander Huber",
   "license": "ISC",
@@ -25,6 +27,7 @@
     "css-loader": "^2.1.1",
     "electron": "^4.0.8",
     "electron-packager": "^13.1.1",
+    "electron-winstaller": "^3.0.4",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
     "react": "^16.8.4",
