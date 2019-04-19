@@ -7,7 +7,7 @@
     "dev": "npx rimraf dist && webpack-dev-server --hot --host 0.0.0.0 --config=./internals/webpack/webpack.dev.js",
     "build": "npx rimraf dist && webpack --config=./internals/webpack/webpack.prod.js",
     "package": "npx rimraf dist && webpack --config=./internals/webpack/webpack.prod.js",
-    "postpackage": "npx rimraf builds && electron-packager ./ Taggr --out=./builds",
+    "postpackage": "npx rimraf builds && electron-packager ./ Taggr --out=./builds --asar",
     "build-win": "node ./build-win.js"
   },
   "productName": "Taggr",

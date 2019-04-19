@@ -4,8 +4,8 @@ resultPromise = electronInstaller.createWindowsInstaller({
   outputDirectory: './builds/win/',
   authors: 'alihuber',
   exe: 'Taggr.exe',
-  iconUrl: 'file:./src/assets/node.ico',
-  setupIcon: 'file:./src/assets/node.ico',
+  // iconUrl: 'file:./src/assets/node.ico',
+  // setupIcon: 'file:./src/assets/node.ico',
   setupExe: 'TaggrSetup.exe',
 });
 
