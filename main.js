@@ -153,6 +153,7 @@ function handleSquirrelEvent() {
 
 const DOMAIN = 'http://192.168.0.15:9999';
 const suffix = process.platform === 'darwin' ? `/RELEASES.json?method=JSON&version=${app.getVersion()}` : '';
+// this just has to point to an HTTP server containing the "releases" and nupkg files
 autoUpdater.setFeedURL({
   url: `${DOMAIN}/Taggr/bd9d0cf6ac3b199969913dd79729f854/${process.platform}/${process.arch}${suffix}`,
   serverType: 'json',
