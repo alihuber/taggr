@@ -171,10 +171,8 @@ if (!dev) {
       detail: 'A new version has been downloaded. Restart the application to apply the updates.',
     };
 
-    if (!dev) {
-      dialog.showMessageBox(dialogOpts, response => {
-        if (response === 0) autoUpdater.quitAndInstall();
-      });
-    }
+    dialog.showMessageBox(dialogOpts, response => {
+      if (response === 0) autoUpdater.quitAndInstall();
+    });
   });
 }
