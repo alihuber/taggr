@@ -154,28 +154,27 @@ function handleSquirrelEvent() {
 const DOMAIN = 'http://192.168.0.15:9999';
 const suffix = process.platform === 'darwin' ? `/RELEASES.json?method=JSON&version=${app.getVersion()}` : '';
 // this just has to point to an HTTP server containing the "releases" and nupkg files
-autoUpdater.setFeedURL({
-  url: `${DOMAIN}/Taggr/bd9d0cf6ac3b199969913dd79729f854/${process.platform}/${process.arch}${suffix}`,
-  serverType: 'json',
-});
 if (!dev) {
+  autoUpdater.setFeedURL({
+    url: `${DOMAIN}/Taggr/bd9d0cf6ac3b199969913dd79729f854/${process.platform}/${process.arch}${suffix}`,
+    serverType: 'json',
+  });
   setInterval(() => {
     autoUpdater.checkForUpdates();
   }, 60000);
+  autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
+    const dialogOpts = {
+      type: 'info',
+      buttons: ['Restart', 'Later'],
+      title: 'Application Update',
+      message: process.platform === 'win32' ? releaseNotes : releaseName,
+      detail: 'A new version has been downloaded. Restart the application to apply the updates.',
+    };
+
+    if (!dev) {
+      dialog.showMessageBox(dialogOpts, response => {
+        if (response === 0) autoUpdater.quitAndInstall();
+      });
+    }
+  });
 }
-
-autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
-  const dialogOpts = {
-    type: 'info',
-    buttons: ['Restart', 'Later'],
-    title: 'Application Update',
-    message: process.platform === 'win32' ? releaseNotes : releaseName,
-    detail: 'A new version has been downloaded. Restart the application to apply the updates.',
-  };
-
-  if (!dev) {
-    dialog.showMessageBox(dialogOpts, response => {
-      if (response === 0) autoUpdater.quitAndInstall();
-    });
-  }
-});
