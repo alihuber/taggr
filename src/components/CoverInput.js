@@ -4,6 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
+import { FilesConsumer } from '../contexts/FilesContext';
 
 const styles = theme => ({
   textField: {
@@ -37,14 +38,18 @@ const CoverDropzone = props => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
   return (
-    <div {...getRootProps()}>
-      <input {...getInputProps()} />
-      <Card className={props.classes.card}>
-        <CardContent className={props.classes.cardContent}>
-          <Typography>Drag 'n' drop an image here, or click to select a file</Typography>
-        </CardContent>
-      </Card>
-    </div>
+    <FilesConsumer>
+      {context => (
+        <div {...getRootProps()}>
+          <input {...getInputProps()} disabled={!context.filesLoaded} />
+          <Card className={props.classes.card}>
+            <CardContent className={props.classes.cardContent}>
+              <Typography>Drag 'n' drop an image here, or click to select a file</Typography>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+    </FilesConsumer>
   );
 };
 

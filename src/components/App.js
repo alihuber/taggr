@@ -34,11 +34,11 @@ class App extends React.Component {
   state = {
     filePaths: [],
     setLoadedFiles: this.setLoadedFiles,
-    songsLoaded: false,
+    filesLoaded: false,
   };
 
   setLoadedFiles = paths => {
-    this.setState({ filePaths: [...paths], songsLoaded: true });
+    this.setState({ filePaths: [...paths], filesLoaded: true });
   };
 
   render() {

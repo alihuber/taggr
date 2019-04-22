@@ -16,6 +16,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+import { FilesConsumer } from '../contexts/FilesContext';
 
 const styles = theme => ({
   flex: {
@@ -95,32 +96,39 @@ class AppMenu extends React.Component {
       <>
         <NumberingDialog open={this.state.numberDialogOpen} handleClose={this.handleClose} />
         <AppBar position="static">
-          <Toolbar variant="dense">
-            <Tooltip title="Save to disk">
-              {/* TODO: disabled on global state */}
-              <IconButton className={classes.menuButton} color="inherit" aria-label="Save" disabled>
-                <SaveIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Numbering">
-              {/* TODO: disabled on global state */}
-              <IconButton className={classes.menuButton} color="inherit" aria-label="Numbering" onClick={this.handleClickOpen} disabled>
-                <FormatListNumberedIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Copy from file names">
-              {/* TODO: disabled on global state */}
-              <IconButton className={classes.menuButton} color="inherit" aria-label="CopyFilenames" disabled>
-                <FileCopyIcon />
-              </IconButton>
-            </Tooltip>
-            <div className={classes.grow} />
-            <div className={classes.title}>
-              <Typography variant="h6" color="inherit" className={classes.grow}>
-                taggr
-              </Typography>
-            </div>
-          </Toolbar>
+          <FilesConsumer>
+            {context => (
+              <Toolbar variant="dense">
+                <Tooltip title="Save to disk">
+                  <IconButton className={classes.menuButton} color="inherit" aria-label="Save" disabled={!context.filesLoaded}>
+                    <SaveIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Numbering">
+                  <IconButton
+                    className={classes.menuButton}
+                    color="inherit"
+                    aria-label="Numbering"
+                    onClick={this.handleClickOpen}
+                    disabled={!context.filesLoaded}
+                  >
+                    <FormatListNumberedIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Copy from file names">
+                  <IconButton className={classes.menuButton} color="inherit" aria-label="CopyFilenames" disabled={!context.filesLoaded}>
+                    <FileCopyIcon />
+                  </IconButton>
+                </Tooltip>
+                <div className={classes.grow} />
+                <div className={classes.title}>
+                  <Typography variant="h6" color="inherit" className={classes.grow}>
+                    taggr
+                  </Typography>
+                </div>
+              </Toolbar>
+            )}
+          </FilesConsumer>
         </AppBar>
       </>
     );

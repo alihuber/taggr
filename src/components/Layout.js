@@ -6,6 +6,7 @@ import SongsTable from './SongsTable';
 import { useDropzone } from 'react-dropzone';
 import CoverInput from './CoverInput';
 import Typography from '@material-ui/core/Typography';
+import { FilesConsumer } from '../contexts/FilesContext';
 
 const styles = {
   divider: {
@@ -58,8 +59,7 @@ class Layout extends React.Component {
           </Col>
           <Col xs={9} sm={9} md={9} lg={9}>
             <SongsDropzone classes={classes} />
-            {/* TODO: if global state songs loaded */}
-            {/* <SongsTable /> */}
+            <FilesConsumer>{context => (context.filesLoaded ? <SongsTable /> : null)}</FilesConsumer>
           </Col>
         </Row>
       </Grid>
