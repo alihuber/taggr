@@ -3,6 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import MusicNoteIcon from '@material-ui/icons/MusicNote';
+import { FilesConsumer } from '../contexts/FilesContext';
 
 const styles = {
   root: {
@@ -12,21 +13,18 @@ const styles = {
   },
 };
 
-class StatusBar extends React.Component {
-  state = {
-    songsLoaded: 0,
-  };
-
-  render() {
-    const { classes } = this.props;
-    const { songsLoaded } = this.state;
-    const loadedNum = `Songs loaded: ${songsLoaded}`;
-    return (
-      <BottomNavigation showLabels className={classes.root}>
-        <BottomNavigationAction label={loadedNum} icon={<MusicNoteIcon />} disabled />
-      </BottomNavigation>
-    );
-  }
-}
+const StatusBar = props => {
+  const { classes } = props;
+  return (
+    <BottomNavigation showLabels className={classes.root}>
+      <FilesConsumer>
+        {context => {
+          const loadedStr = `Songs loaded: ${context.filePaths.length}`;
+          return <BottomNavigationAction label={loadedStr} icon={<MusicNoteIcon />} disabled showLabel />;
+        }}
+      </FilesConsumer>
+    </BottomNavigation>
+  );
+};
 
 export default withStyles(styles)(StatusBar);

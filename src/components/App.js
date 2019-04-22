@@ -2,6 +2,7 @@ import '../assets/css/App.css';
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import { FilesProvider } from '../contexts/FilesContext';
 import AppMenu from './AppMenu';
 import StatusBar from './StatusBar';
 import Layout from './Layout';
@@ -30,15 +31,27 @@ const theme = createMuiTheme({
 });
 
 class App extends React.Component {
+  state = {
+    filePaths: [],
+    setLoadedFiles: this.setLoadedFiles,
+    songsLoaded: false,
+  };
+
+  setLoadedFiles = paths => {
+    this.setState({ filePaths: [...paths], songsLoaded: true });
+  };
+
   render() {
     const { classes } = this.props;
     return (
       <MuiThemeProvider theme={theme}>
-        <div className={classes.root}>
-          <AppMenu />
-          <Layout />
-          <StatusBar />
-        </div>
+        <FilesProvider value={this.state}>
+          <div className={classes.root}>
+            <AppMenu />
+            <Layout />
+            <StatusBar />
+          </div>
+        </FilesProvider>
       </MuiThemeProvider>
     );
   }
