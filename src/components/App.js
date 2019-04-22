@@ -1,11 +1,13 @@
-import '../assets/css/App.css';
+const ipc = require('electron').ipcRenderer;
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import last from 'lodash/last';
 import { FilesProvider } from '../contexts/FilesContext';
 import AppMenu from './AppMenu';
 import StatusBar from './StatusBar';
 import Layout from './Layout';
+import '../assets/css/App.css';
 
 const styles = {
   root: {
@@ -35,14 +37,43 @@ class App extends React.Component {
     filePaths: [],
     setLoadedFiles: this.setLoadedFiles,
     filesLoaded: false,
+    filesMetadata: [],
+  };
+
+  _generateMetadata = paths => {
+    const metadata = [];
+    paths.forEach(path => {
+      const fileName = last(path.split('/'));
+      const obj = {
+        numbering: '',
+        title: '',
+        artist: '',
+        fileName,
+        albumArtist: '',
+        album: '',
+        genre: '',
+        year: '',
+        comment: '',
+        cover: '',
+        selected: false,
+      };
+      metadata.push(obj);
+    });
+    return metadata;
   };
 
   setLoadedFiles = paths => {
-    this.setState({ filePaths: [...paths], filesLoaded: true });
+    const metadata = this._generateMetadata(paths);
+    this.setState({ filePaths: [...paths], filesLoaded: true, filesMetadata: metadata });
   };
 
   render() {
     const { classes } = this.props;
+
+    ipc.on('selected-files', (event, paths) => {
+      this.setLoadedFiles(paths);
+    });
+
     return (
       <MuiThemeProvider theme={theme}>
         <FilesProvider value={this.state}>

@@ -1,6 +1,9 @@
 // Import parts of electron to use
-const { app, BrowserWindow, autoUpdater, dialog } = require('electron');
+const { app, BrowserWindow, autoUpdater, dialog, ipcMain } = require('electron');
 const url = require('url');
+const os = require('os');
+const fs = require('fs');
+const path = require('path');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -176,3 +179,58 @@ if (!dev) {
     });
   });
 }
+
+ipcMain.on('open-file-dialog-for-files', function(event) {
+  const dialogOpts = {
+    type: 'info',
+    buttons: ['Ok'],
+    title: 'Error',
+    detail: 'File given was no .mp3 file!',
+  };
+  if (os.platform() === 'linux' || os.platform() === 'win32') {
+    dialog.showOpenDialog(
+      {
+        properties: ['openFile'],
+      },
+      function(files) {
+        if (files) event.sender.send('selected-files', files[0]);
+      }
+    );
+  } else {
+    dialog.showOpenDialog(
+      {
+        properties: ['openFile', 'openDirectory'],
+      },
+      function(files) {
+        if (files) {
+          fs.stat(files[0], (err, stats) => {
+            if (stats.isFile()) {
+              const ending = path.extname(files[0]);
+              if (ending !== '.mp3') {
+                dialog.showMessageBox(dialogOpts, () => {});
+              } else {
+                event.sender.send('selected-files', [files[0]]);
+              }
+            } else if (stats.isDirectory()) {
+              fs.readdir(files[0], (err, paths) => {
+                if (err) {
+                  console.log(err);
+                  return;
+                }
+                const collectedFiles = [];
+                paths.forEach(filePath => {
+                  const ending = path.extname(filePath);
+                  if (ending !== '.mp3') {
+                    return;
+                  }
+                  collectedFiles.push(path.join(files[0], filePath));
+                });
+                event.sender.send('selected-files', collectedFiles);
+              });
+            }
+          });
+        }
+      }
+    );
+  }
+});

@@ -1,9 +1,10 @@
 {
-  "name": "Taggr",
+  "name": "taggr",
   "version": "0.0.1",
   "description": "ElectronJS with ReactJS boilerplate",
   "scripts": {
     "prod": "npx rimraf dist && webpack --config=./internals/webpack/webpack.prod.js && electron --noDevServer .",
+    "debug": "npx rimraf dist && webpack --config=./internals/webpack/webpack.prod.js && electron --inspect-brk --noDevServer .",
     "dev": "npx rimraf dist && webpack-dev-server --hot --host 0.0.0.0 --config=./internals/webpack/webpack.dev.js",
     "build": "npx rimraf dist && webpack --config=./internals/webpack/webpack.prod.js",
     "package": "npx rimraf dist && webpack --config=./internals/webpack/webpack.prod.js",
@@ -38,5 +39,8 @@
     "webpack": "^4.29.6",
     "webpack-cli": "^3.2.3",
     "webpack-dev-server": "^3.2.1"
+  },
+  "dependencies": {
+    "lodash": "^4.17.11"
   }
 }

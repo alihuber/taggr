@@ -115,7 +115,7 @@ class AppMenu extends React.Component {
                     <FormatListNumberedIcon />
                   </IconButton>
                 </Tooltip>
-                <Tooltip title="Copy from file names">
+                <Tooltip title="Set title from file name">
                   <IconButton className={classes.menuButton} color="inherit" aria-label="CopyFilenames" disabled={!context.filesLoaded}>
                     <FileCopyIcon />
                   </IconButton>

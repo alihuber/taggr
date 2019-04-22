@@ -1,11 +1,12 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import Checkbox from '@material-ui/core/Checkbox';
+import { FilesConsumer } from '../contexts/FilesContext';
 
 const styles = theme => ({
   root: {
@@ -23,22 +24,75 @@ const styles = theme => ({
   },
 });
 
+class SongsTableHead extends React.Component {
+  render() {
+    const { onSelectAllClick, numSelected, rowCount } = this.props;
+
+    return (
+      <TableHead>
+        <TableRow>
+          <TableCell padding="checkbox">
+            <Checkbox
+              indeterminate={numSelected > 0 && numSelected < rowCount}
+              checked={numSelected === rowCount}
+              onChange={onSelectAllClick}
+            />
+          </TableCell>
+          <TableCell>#</TableCell>
+          <TableCell>Title</TableCell>
+          <TableCell>Artist</TableCell>
+          <TableCell>File Name</TableCell>
+        </TableRow>
+      </TableHead>
+    );
+  }
+}
+
 class SongsTable extends React.Component {
+  handleSelectAllClick = event => {};
+  handleClick = event => {};
+
   render() {
     const { classes } = this.props;
     return (
       <div className={classes.root}>
-        <Table className={classes.table}>
-          <TableHead>
-            <TableRow>
-              <TableCell>#</TableCell>
-              <TableCell>Title</TableCell>
-              <TableCell>Artist</TableCell>
-              <TableCell>File Name</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody />
-        </Table>
+        <FilesConsumer>
+          {context => {
+            const numSelected = context.filesMetadata.filter(data => data.selected).length;
+            return (
+              <Table className={classes.table}>
+                <SongsTableHead
+                  numSelected={numSelected}
+                  onSelectAllClick={this.handleSelectAllClick}
+                  rowCount={context.filesMetadata.length}
+                />
+                <TableBody>
+                  {context.filesMetadata.map((row, idx) => (
+                    <TableRow
+                      hover
+                      onClick={event => this.handleClick(event, idx)}
+                      role="checkbox"
+                      aria-checked={row.selected}
+                      tabIndex={-1}
+                      key={row.fileName + idx}
+                      selected={row.selected}
+                    >
+                      <TableCell padding="checkbox">
+                        <Checkbox checked={row.selected} />
+                      </TableCell>
+                      <TableCell component="th" scope="row">
+                        {row.numbering}
+                      </TableCell>
+                      <TableCell>{row.title}</TableCell>
+                      <TableCell>{row.artist}</TableCell>
+                      <TableCell>{row.fileName}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            );
+          }}
+        </FilesConsumer>
       </div>
     );
   }
