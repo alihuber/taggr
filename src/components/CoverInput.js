@@ -4,6 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
+import cloneDeep from 'lodash/cloneDeep';
 import { FilesConsumer } from '../contexts/FilesContext';
 
 const styles = theme => ({
@@ -36,12 +37,14 @@ const CoverDropzone = props => {
     acceptedFiles.forEach(file => reader.readAsBinaryString(file));
   }, []);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  const oldStyle = cloneDeep(props.style);
+  let newStyle = Object.assign(oldStyle, { position: 'fixed', top: 580 });
 
   return (
     <FilesConsumer>
       {context => (
-        <div {...getRootProps()}>
-          <input {...getInputProps()} disabled={!context.filesLoaded} />
+        <div {...getRootProps()} style={newStyle}>
+          <input {...getInputProps()} disabled={!context.filesLoaded || !context.oneSelected} />
           <Card className={props.classes.card}>
             <CardContent className={props.classes.cardContent}>
               <Typography>Drag 'n' drop an image here, or click to select a file</Typography>
@@ -55,8 +58,8 @@ const CoverDropzone = props => {
 
 class CoverInput extends React.Component {
   render() {
-    const { classes } = this.props;
-    return <CoverDropzone classes={classes} />;
+    const { classes, style } = this.props;
+    return <CoverDropzone classes={classes} style={style} />;
   }
 }
 export default withStyles(styles)(CoverInput);

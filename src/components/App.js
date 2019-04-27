@@ -2,11 +2,12 @@ const ipc = require('electron').ipcRenderer;
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import { StickyContainer, Sticky } from 'react-sticky';
 import last from 'lodash/last';
 import { FilesProvider } from '../contexts/FilesContext';
 import AppMenu from './AppMenu';
-import StatusBar from './StatusBar';
 import Layout from './Layout';
+import '../index.css';
 import '../assets/css/App.css';
 
 const styles = {
@@ -33,12 +34,20 @@ const theme = createMuiTheme({
 });
 
 class App extends React.Component {
-  state = {
-    filePaths: [],
-    setLoadedFiles: this.setLoadedFiles,
-    filesLoaded: false,
-    filesMetadata: [],
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      filePaths: [],
+      setLoadedFiles: this.setLoadedFiles,
+      filesLoaded: false,
+      filesMetadata: [],
+      allSelected: false,
+      setAllSelected: this.setAllSelected,
+      setMetadata: this.setMetadata,
+      moreThanOneSelected: false,
+      oneSelected: false,
+    };
+  }
 
   _generateMetadata = paths => {
     const metadata = [];
@@ -67,6 +76,27 @@ class App extends React.Component {
     this.setState({ filePaths: [...paths], filesLoaded: true, filesMetadata: metadata });
   };
 
+  setMetadata = data => {
+    let numSelected = 0;
+    data.forEach(m => (m.selected ? (numSelected += 1) : null));
+    this.setState({ filesMetadata: data });
+    if (numSelected > 1) {
+      this.setState({ moreThanOneSelected: true });
+    } else {
+      this.setState({ moreThanOneSelected: false });
+    }
+    if (numSelected === 1) {
+      this.setState({ oneSelected: true });
+    }
+    if (numSelected === 0) {
+      this.setState({ oneSelected: false });
+    }
+  };
+
+  setAllSelected = value => {
+    this.setState({ allSelected: value });
+  };
+
   render() {
     const { classes } = this.props;
 
@@ -78,9 +108,10 @@ class App extends React.Component {
       <MuiThemeProvider theme={theme}>
         <FilesProvider value={this.state}>
           <div className={classes.root}>
-            <AppMenu />
-            <Layout />
-            <StatusBar />
+            <StickyContainer>
+              <Sticky>{({ style }) => <AppMenu style={style} />}</Sticky>
+              <Layout />
+            </StickyContainer>
           </div>
         </FilesProvider>
       </MuiThemeProvider>

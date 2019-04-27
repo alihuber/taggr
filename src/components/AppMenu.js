@@ -16,6 +16,8 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
+import MusicNoteIcon from '@material-ui/icons/MusicNote';
 import { FilesConsumer } from '../contexts/FilesContext';
 
 const styles = theme => ({
@@ -39,6 +41,9 @@ const styles = theme => ({
       marginLeft: theme.spacing.unit,
       width: 'auto',
     },
+  },
+  statusIcon: {
+    left: '-60px',
   },
 });
 
@@ -91,43 +96,53 @@ class AppMenu extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, style } = this.props;
     return (
       <>
         <NumberingDialog open={this.state.numberDialogOpen} handleClose={this.handleClose} />
-        <AppBar position="static">
+        <AppBar position="static" style={style}>
           <FilesConsumer>
-            {context => (
-              <Toolbar variant="dense">
-                <Tooltip title="Save to disk">
-                  <IconButton className={classes.menuButton} color="inherit" aria-label="Save" disabled={!context.filesLoaded}>
-                    <SaveIcon />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Numbering">
-                  <IconButton
-                    className={classes.menuButton}
-                    color="inherit"
-                    aria-label="Numbering"
-                    onClick={this.handleClickOpen}
-                    disabled={!context.filesLoaded}
-                  >
-                    <FormatListNumberedIcon />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Set title from file name">
-                  <IconButton className={classes.menuButton} color="inherit" aria-label="CopyFilenames" disabled={!context.filesLoaded}>
-                    <FileCopyIcon />
-                  </IconButton>
-                </Tooltip>
-                <div className={classes.grow} />
-                <div className={classes.title}>
-                  <Typography variant="h6" color="inherit" className={classes.grow}>
-                    taggr
-                  </Typography>
-                </div>
-              </Toolbar>
-            )}
+            {context => {
+              const loadedStr = `Songs loaded: ${context.filePaths.length}`;
+              return (
+                <Toolbar variant="dense">
+                  <Tooltip title="Save to disk">
+                    <IconButton className={classes.menuButton} color="inherit" aria-label="Save" disabled={!context.filesLoaded}>
+                      <SaveIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Numbering">
+                    <IconButton
+                      className={classes.menuButton}
+                      color="inherit"
+                      aria-label="Numbering"
+                      onClick={this.handleClickOpen}
+                      disabled={!context.filesLoaded || !context.oneSelected}
+                    >
+                      <FormatListNumberedIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Set title from file name">
+                    <IconButton
+                      className={classes.menuButton}
+                      color="inherit"
+                      aria-label="CopyFilenames"
+                      disabled={!context.filesLoaded || !context.oneSelected}
+                    >
+                      <FileCopyIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <div className={classes.grow} />
+                  {<BottomNavigationAction className={classes.statusIcon} label={loadedStr} icon={<MusicNoteIcon />} disabled showLabel />}
+                  <div className={classes.grow} />
+                  <div className={classes.title}>
+                    <Typography variant="h6" color="inherit" className={classes.grow}>
+                      taggr
+                    </Typography>
+                  </div>
+                </Toolbar>
+              );
+            }}
           </FilesConsumer>
         </AppBar>
       </>

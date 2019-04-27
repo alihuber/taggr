@@ -2,29 +2,38 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import { FilesConsumer } from '../contexts/FilesContext';
+import cloneDeep from 'lodash/cloneDeep';
 
 const styles = theme => ({
   textField: {
-    // marginLeft: theme.spacing.unit,
-    // marginRight: theme.spacing.unit,
     width: '100%',
   },
 });
 
 class AttributesInput extends React.Component {
   render() {
-    const { classes } = this.props;
+    const { classes, style } = this.props;
+    const oldStyle = cloneDeep(style);
+    let newStyle = Object.assign(oldStyle, { top: 55 });
     return (
       <FilesConsumer>
         {context => (
-          <>
+          <div style={newStyle}>
+            <TextField
+              id="standard-title"
+              label="Title"
+              placeholder="Title"
+              className={classes.textField}
+              margin="normal"
+              disabled={!context.filesLoaded || !context.oneSelected || context.allSelected || context.moreThanOneSelected}
+            />
             <TextField
               id="standard-artist"
               label="Artist"
               placeholder="Artist"
               className={classes.textField}
               margin="normal"
-              disabled={!context.filesLoaded}
+              disabled={!context.filesLoaded || !context.oneSelected}
             />
             <TextField
               id="standard-album-artist"
@@ -32,7 +41,7 @@ class AttributesInput extends React.Component {
               placeholder="Album Artist"
               className={classes.textField}
               margin="normal"
-              disabled={!context.filesLoaded}
+              disabled={!context.filesLoaded || !context.oneSelected}
             />
             <TextField
               id="standard-album"
@@ -40,7 +49,7 @@ class AttributesInput extends React.Component {
               placeholder="Album"
               className={classes.textField}
               margin="normal"
-              disabled={!context.filesLoaded}
+              disabled={!context.filesLoaded || !context.oneSelected}
             />
             <TextField
               id="standard-genre"
@@ -48,7 +57,7 @@ class AttributesInput extends React.Component {
               placeholder="Genre"
               className={classes.textField}
               margin="normal"
-              disabled={!context.filesLoaded}
+              disabled={!context.filesLoaded || !context.oneSelected}
             />
             <TextField
               id="standard-year"
@@ -56,7 +65,7 @@ class AttributesInput extends React.Component {
               placeholder="Year"
               className={classes.textField}
               margin="normal"
-              disabled={!context.filesLoaded}
+              disabled={!context.filesLoaded || !context.oneSelected}
             />
             <TextField
               id="standard-comment"
@@ -64,9 +73,9 @@ class AttributesInput extends React.Component {
               placeholder="Comment"
               className={classes.textField}
               margin="normal"
-              disabled={!context.filesLoaded}
+              disabled={!context.filesLoaded || !context.oneSelected}
             />
-          </>
+          </div>
         )}
       </FilesConsumer>
     );

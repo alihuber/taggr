@@ -4,6 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { Grid, Row, Col } from 'react-flexbox-grid';
+import { StickyContainer, Sticky } from 'react-sticky';
 import AttributesInput from './AttributesInput';
 import SongsTable from './SongsTable';
 import CoverInput from './CoverInput';
@@ -36,8 +37,8 @@ class Layout extends React.Component {
       <Grid fluid>
         <Row center="xs">
           <Col xs={3} sm={3} md={3} lg={3} className={classes.divider}>
-            <AttributesInput />
-            <CoverInput />
+            <Sticky>{({ style }) => <AttributesInput style={style} />}</Sticky>
+            <Sticky>{({ style }) => <CoverInput style={style} />}</Sticky>
           </Col>
           <Col xs={9} sm={9} md={9} lg={9}>
             <FilesConsumer>

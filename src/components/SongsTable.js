@@ -12,7 +12,6 @@ const styles = theme => ({
   root: {
     width: '100%',
     marginTop: theme.spacing.unit * 3,
-    overflowX: 'auto',
   },
   table: {
     minWidth: '100%',
@@ -49,8 +48,21 @@ class SongsTableHead extends React.Component {
 }
 
 class SongsTable extends React.Component {
-  handleSelectAllClick = event => {};
-  handleClick = event => {};
+  handleSelectAllClick = (event, context) => {
+    const value = event.target.checked;
+    context.filesMetadata.forEach(metadata => {
+      metadata.selected = value;
+    });
+    context.setAllSelected(value);
+    context.setMetadata(context.filesMetadata);
+  };
+
+  handleClick = (evt, idx, context) => {
+    const { filesMetadata } = context;
+    const value = filesMetadata[idx].selected;
+    filesMetadata[idx].selected = !value;
+    context.setMetadata(filesMetadata);
+  };
 
   render() {
     const { classes } = this.props;
@@ -63,14 +75,14 @@ class SongsTable extends React.Component {
               <Table className={classes.table}>
                 <SongsTableHead
                   numSelected={numSelected}
-                  onSelectAllClick={this.handleSelectAllClick}
+                  onSelectAllClick={evt => this.handleSelectAllClick(evt, context)}
                   rowCount={context.filesMetadata.length}
                 />
                 <TableBody>
                   {context.filesMetadata.map((row, idx) => (
                     <TableRow
                       hover
-                      onClick={event => this.handleClick(event, idx)}
+                      onClick={event => this.handleClick(event, idx, context)}
                       role="checkbox"
                       aria-checked={row.selected}
                       tabIndex={-1}
@@ -78,7 +90,7 @@ class SongsTable extends React.Component {
                       selected={row.selected}
                     >
                       <TableCell padding="checkbox">
-                        <Checkbox checked={row.selected} />
+                        <Checkbox checked={row.selected || false} />
                       </TableCell>
                       <TableCell component="th" scope="row">
                         {row.numbering}
