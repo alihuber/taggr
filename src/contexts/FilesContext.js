@@ -10,6 +10,8 @@ const FilesContext = React.createContext({
   setMetadata: () => {},
   moreThanOneSelected: false,
   oneSelected: false,
+  setMoreThanOneSelected: false,
+  setOneSelected: false,
 });
 
 export const FilesProvider = FilesContext.Provider;

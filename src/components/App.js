@@ -46,6 +46,8 @@ class App extends React.Component {
       setMetadata: this.setMetadata,
       moreThanOneSelected: false,
       oneSelected: false,
+      setMoreThanOneSelected: this.setMoreThanOneSelected,
+      setOneSelected: this.setOneSelected,
     };
   }
 
@@ -77,24 +79,19 @@ class App extends React.Component {
   };
 
   setMetadata = data => {
-    let numSelected = 0;
-    data.forEach(m => (m.selected ? (numSelected += 1) : null));
     this.setState({ filesMetadata: data });
-    if (numSelected > 1) {
-      this.setState({ moreThanOneSelected: true });
-    } else {
-      this.setState({ moreThanOneSelected: false });
-    }
-    if (numSelected === 1) {
-      this.setState({ oneSelected: true });
-    }
-    if (numSelected === 0) {
-      this.setState({ oneSelected: false });
-    }
   };
 
   setAllSelected = value => {
     this.setState({ allSelected: value });
+  };
+
+  setMoreThanOneSelected = value => {
+    this.setState({ moreThanOneSelected: value });
+  };
+
+  setOneSelected = value => {
+    this.setState({ oneSelected: value });
   };
 
   render() {

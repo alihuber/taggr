@@ -47,7 +47,7 @@ const styles = theme => ({
   },
 });
 
-const NumberingDialog = ({ open, handleClose }) => {
+const NumberingDialog = ({ open, handleClose, filesContext }) => {
   const [storeLeadingZeros, setStoreLeadingZeros] = useState(false);
   const [storeTrackCount, setStoreTrackCount] = useState(false);
 
@@ -74,7 +74,7 @@ const NumberingDialog = ({ open, handleClose }) => {
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} color="primary">
+        <Button onClick={() => handleClose(storeZeros, storeTracks, filesContext)} color="primary">
           Apply
         </Button>
       </DialogActions>
@@ -87,24 +87,51 @@ class AppMenu extends React.Component {
     numberDialogOpen: false,
   };
 
-  handleClickOpen = () => {
+  handleNumberClickOpen = () => {
     this.setState({ numberDialogOpen: true });
   };
 
-  handleClose = () => {
+  handleCopyFilenames = filesContext => {
+    const { filesMetadata } = filesContext;
+    filesMetadata.forEach((data, idx) => {
+      data.title = data.fileName
+        .split('-')[1]
+        .split('.mp3')[0]
+        .trim();
+    });
+    filesContext.setMetadata(filesMetadata);
+  };
+
+  handleNumberClose = (storeZeros = false, storeTracks = false, filesContext = {}) => {
+    const { filesMetadata } = filesContext;
+    if (filesMetadata) {
+      filesMetadata.forEach((data, idx) => {
+        if (data.selected) {
+          let numbering = String(idx + 1);
+          if (storeZeros) {
+            const maxLength = String(filesMetadata.length).length;
+            numbering = numbering.padStart(maxLength, '0');
+          }
+          if (storeTracks) {
+            numbering += `/${filesMetadata.length}`;
+          }
+          data.numbering = numbering;
+        }
+      });
+      filesContext.setMetadata(filesMetadata);
+    }
     this.setState({ numberDialogOpen: false });
   };
 
   render() {
     const { classes, style } = this.props;
     return (
-      <>
-        <NumberingDialog open={this.state.numberDialogOpen} handleClose={this.handleClose} />
-        <AppBar position="static" style={style}>
-          <FilesConsumer>
-            {context => {
-              const loadedStr = `Songs loaded: ${context.filePaths.length}`;
-              return (
+      <AppBar position="static" style={style}>
+        <FilesConsumer>
+          {context => {
+            const loadedStr = `Songs loaded: ${context.filePaths.length}`;
+            return (
+              <>
                 <Toolbar variant="dense">
                   <Tooltip title="Save to disk">
                     <IconButton className={classes.menuButton} color="inherit" aria-label="Save" disabled={!context.filesLoaded}>
@@ -116,7 +143,7 @@ class AppMenu extends React.Component {
                       className={classes.menuButton}
                       color="inherit"
                       aria-label="Numbering"
-                      onClick={this.handleClickOpen}
+                      onClick={this.handleNumberClickOpen}
                       disabled={!context.filesLoaded || !context.oneSelected}
                     >
                       <FormatListNumberedIcon />
@@ -127,6 +154,7 @@ class AppMenu extends React.Component {
                       className={classes.menuButton}
                       color="inherit"
                       aria-label="CopyFilenames"
+                      onClick={() => this.handleCopyFilenames(context)}
                       disabled={!context.filesLoaded || !context.oneSelected}
                     >
                       <FileCopyIcon />
@@ -141,11 +169,12 @@ class AppMenu extends React.Component {
                     </Typography>
                   </div>
                 </Toolbar>
-              );
-            }}
-          </FilesConsumer>
-        </AppBar>
-      </>
+                <NumberingDialog open={this.state.numberDialogOpen} handleClose={this.handleNumberClose} filesContext={context} />
+              </>
+            );
+          }}
+        </FilesConsumer>
+      </AppBar>
     );
   }
 }
