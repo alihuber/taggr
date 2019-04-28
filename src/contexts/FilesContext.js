@@ -2,7 +2,7 @@ import React from 'react';
 
 const FilesContext = React.createContext({
   filePaths: [],
-  imagePath: [],
+  imagePath: '',
   setLoadedFiles: () => {},
   setLoadedImage: () => {},
   filesLoaded: false,

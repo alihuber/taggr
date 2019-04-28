@@ -77,17 +77,25 @@ class App extends React.Component {
   };
 
   setLoadedFiles = paths => {
-    const metadata = this._generateMetadata(paths);
-    this.setState({ filePaths: [...paths], filesLoaded: true, filesMetadata: metadata });
+    if (paths.length !== 0) {
+      const metadata = this._generateMetadata(paths);
+      this.setState({ filePaths: [...paths], filesLoaded: true, filesMetadata: metadata });
+    } else {
+      this.setState({ filePaths: [], filesLoaded: false, filesMetadata: [] });
+    }
   };
 
   setLoadedImage = path => {
-    this.setState({ imagePath: path, imageLoaded: true });
-    const currentMetadata = this.state.filesMetadata;
-    currentMetadata.forEach((data, idx) => {
-      data.cover = path;
-    });
-    this.setState({ filesMetadata: currentMetadata });
+    if (path.length !== 0) {
+      this.setState({ imagePath: path, imageLoaded: true });
+      const currentMetadata = this.state.filesMetadata;
+      currentMetadata.forEach((data, idx) => {
+        data.cover = path;
+      });
+      this.setState({ filesMetadata: currentMetadata });
+    } else {
+      this.setState({ imagePath: '', imageLoaded: false, filesMetadata: [] });
+    }
   };
 
   setMetadata = data => {

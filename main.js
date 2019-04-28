@@ -291,6 +291,14 @@ ipcMain.on('open-file-dialog-for-image', function(event) {
   }
 });
 
+ipcMain.on('clear-data', function() {
+  try {
+    fs.unlinkSync(imagesPath);
+  } catch (err) {
+    console.log('error removing cover file..');
+  }
+});
+
 ipcMain.on('save-metadata', function(event, context) {
   const dialogOpts = {
     type: 'info',

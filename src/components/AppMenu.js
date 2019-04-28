@@ -19,6 +19,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import MusicNoteIcon from '@material-ui/icons/MusicNote';
+import ClearIcon from '@material-ui/icons/Clear';
 import { FilesConsumer } from '../contexts/FilesContext';
 
 const styles = theme => ({
@@ -124,9 +125,18 @@ class AppMenu extends React.Component {
     this.setState({ numberDialogOpen: false });
   };
 
-  handleSave = context => {
-    // const selected = context.filesMetadata.filter(data => data.selected);
-    ipc.send('save-metadata', context);
+  handleSave = filesContext => {
+    ipc.send('save-metadata', filesContext);
+  };
+
+  handleClear = filesContext => {
+    ipc.send('clear-data');
+    filesContext.setLoadedFiles([]);
+    filesContext.setLoadedImage('');
+    filesContext.setAllSelected(false);
+    filesContext.setMetadata([]);
+    filesContext.setMoreThanOneSelected(false);
+    filesContext.setOneSelected(false);
   };
 
   render() {
@@ -134,8 +144,8 @@ class AppMenu extends React.Component {
     return (
       <AppBar position="static" style={style}>
         <FilesConsumer>
-          {context => {
-            const loadedStr = `Files loaded: ${context.filePaths.length}`;
+          {filesContext => {
+            const loadedStr = `Files loaded: ${filesContext.filePaths.length}`;
             return (
               <>
                 <Toolbar variant="dense">
@@ -144,8 +154,8 @@ class AppMenu extends React.Component {
                       className={classes.menuButton}
                       color="inherit"
                       aria-label="Save"
-                      disabled={!context.filesLoaded}
-                      onClick={() => this.handleSave(context)}
+                      disabled={!filesContext.filesLoaded}
+                      onClick={() => this.handleSave(filesContext)}
                     >
                       <SaveIcon />
                     </IconButton>
@@ -156,7 +166,7 @@ class AppMenu extends React.Component {
                       color="inherit"
                       aria-label="Numbering"
                       onClick={this.handleNumberClickOpen}
-                      disabled={!context.filesLoaded || !context.oneSelected}
+                      disabled={!filesContext.filesLoaded || !filesContext.oneSelected}
                     >
                       <FormatListNumberedIcon />
                     </IconButton>
@@ -166,14 +176,23 @@ class AppMenu extends React.Component {
                       className={classes.menuButton}
                       color="inherit"
                       aria-label="CopyFilenames"
-                      onClick={() => this.handleCopyFilenames(context)}
-                      disabled={!context.filesLoaded || !context.oneSelected}
+                      onClick={() => this.handleCopyFilenames(filesContext)}
+                      disabled={!filesContext.filesLoaded || !filesContext.oneSelected}
                     >
                       <FileCopyIcon />
                     </IconButton>
                   </Tooltip>
                   <div className={classes.grow} />
                   {<BottomNavigationAction className={classes.statusIcon} label={loadedStr} icon={<MusicNoteIcon />} disabled showLabel />}
+                  {
+                    <BottomNavigationAction
+                      className={classes.statusIcon}
+                      label="Clear"
+                      icon={<ClearIcon />}
+                      showLabel
+                      onClick={() => this.handleClear(filesContext)}
+                    />
+                  }
                   <div className={classes.grow} />
                   <div className={classes.title}>
                     <Typography variant="h6" color="inherit" className={classes.grow}>
@@ -181,7 +200,7 @@ class AppMenu extends React.Component {
                     </Typography>
                   </div>
                 </Toolbar>
-                <NumberingDialog open={this.state.numberDialogOpen} handleClose={this.handleNumberClose} filesContext={context} />
+                <NumberingDialog open={this.state.numberDialogOpen} handleClose={this.handleNumberClose} filesContext={filesContext} />
               </>
             );
           }}
