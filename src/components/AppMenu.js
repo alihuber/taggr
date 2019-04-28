@@ -1,4 +1,5 @@
 import '../assets/css/App.css';
+const ipc = require('electron').ipcRenderer;
 import React, { useState } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -123,18 +124,29 @@ class AppMenu extends React.Component {
     this.setState({ numberDialogOpen: false });
   };
 
+  handleSave = context => {
+    // const selected = context.filesMetadata.filter(data => data.selected);
+    ipc.send('save-metadata', context);
+  };
+
   render() {
     const { classes, style } = this.props;
     return (
       <AppBar position="static" style={style}>
         <FilesConsumer>
           {context => {
-            const loadedStr = `Songs loaded: ${context.filePaths.length}`;
+            const loadedStr = `Files loaded: ${context.filePaths.length}`;
             return (
               <>
                 <Toolbar variant="dense">
                   <Tooltip title="Save to disk">
-                    <IconButton className={classes.menuButton} color="inherit" aria-label="Save" disabled={!context.filesLoaded}>
+                    <IconButton
+                      className={classes.menuButton}
+                      color="inherit"
+                      aria-label="Save"
+                      disabled={!context.filesLoaded}
+                      onClick={() => this.handleSave(context)}
+                    >
                       <SaveIcon />
                     </IconButton>
                   </Tooltip>

@@ -1,5 +1,6 @@
 // Import parts of electron to use
 const { app, BrowserWindow, autoUpdater, dialog, ipcMain } = require('electron');
+const ID3Writer = require('browser-id3-writer');
 const url = require('url');
 const os = require('os');
 const fs = require('fs');
@@ -280,7 +281,7 @@ ipcMain.on('open-file-dialog-for-image', function(event) {
                   if (err) throw err;
                   console.log('copied cover file');
                 });
-                event.sender.send('selected-image', [files[0]]);
+                event.sender.send('selected-image', files[0]);
               }
             }
           });
@@ -288,4 +289,59 @@ ipcMain.on('open-file-dialog-for-image', function(event) {
       }
     );
   }
+});
+
+ipcMain.on('save-metadata', function(event, context) {
+  const dialogOpts = {
+    type: 'info',
+    buttons: ['Ok'],
+    title: 'Success',
+    detail: 'Files sucessfully saved',
+  };
+  const length = context.filePaths.length;
+  context.filePaths.forEach((filepath, idx) => {
+    const songBuffer = fs.readFileSync(filepath);
+    const metadata = context.filesMetadata[idx];
+    const coverBuffer = fs.readFileSync(metadata.cover);
+    const title = metadata.title;
+    const album = metadata.album;
+    const artist = [metadata.artist];
+    const albumArtist = metadata.albumArtist;
+    const genre = [metadata.genre];
+    const year = Number(metadata.year);
+    const comment = metadata.comment;
+    const numbering = metadata.numbering;
+    const writer = new ID3Writer(songBuffer);
+    // TIT2 (song title)
+    // TALB (album title)
+    // TPE1 (song artists) ARRAY
+    // TPE2 (album artist)
+    // TRCK (song number in album): '5' or '5/10'
+    // TYER (album release year) NUMBER
+    // TCON (song genres) ARRAY
+    writer
+      .setFrame('TIT2', title)
+      .setFrame('TALB', album)
+      .setFrame('TPE1', artist)
+      .setFrame('TPE2', albumArtist)
+      .setFrame('TRCK', numbering)
+      .setFrame('TCON', genre)
+      .setFrame('TYER', year)
+      .setFrame('COMM', {
+        description: 'Comment',
+        text: comment,
+      })
+      .setFrame('APIC', {
+        type: 3, // cover front
+        data: coverBuffer,
+        description: 'Cover',
+      });
+    writer.addTag();
+
+    const taggedSongBuffer = Buffer.from(writer.arrayBuffer);
+    fs.writeFileSync(filepath, taggedSongBuffer);
+    if (idx === length - 1) {
+      dialog.showMessageBox(dialogOpts, () => {});
+    }
+  });
 });

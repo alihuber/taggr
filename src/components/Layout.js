@@ -74,7 +74,7 @@ class Layout extends React.Component {
                     ) : (
                       <div className={classes.textContent}>
                         <Button variant="outlined" color="inherit" className={classes.button} onClick={sendOpenFileDialog}>
-                          <Typography variant="subtitle1">No songs loaded. Click here to open...</Typography>
+                          <Typography variant="subtitle1">No files loaded. Click here to open...</Typography>
                         </Button>
                       </div>
                     )}
