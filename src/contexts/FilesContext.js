@@ -2,8 +2,11 @@ import React from 'react';
 
 const FilesContext = React.createContext({
   filePaths: [],
+  imagePath: [],
   setLoadedFiles: () => {},
+  setLoadedImage: () => {},
   filesLoaded: false,
+  imageLoaded: false,
   filesMetadata: [],
   allSelected: false,
   setAllSelected: () => {},

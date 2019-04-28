@@ -1,6 +1,7 @@
-import React, { useCallback } from 'react';
-import { useDropzone } from 'react-dropzone';
+const ipc = require('electron').ipcRenderer;
+import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
@@ -22,35 +23,39 @@ const styles = theme => ({
   },
 });
 
+const sendOpenFileDialog = () => {
+  ipc.send('open-file-dialog-for-image');
+};
+
 const CoverDropzone = props => {
-  const onDrop = useCallback(acceptedFiles => {
-    const reader = new FileReader();
-
-    reader.onabort = () => console.log('file reading was aborted');
-    reader.onerror = () => console.log('file reading has failed');
-    reader.onload = () => {
-      // Do whatever you want with the file contents
-      const binaryStr = reader.result;
-      console.log(binaryStr);
-    };
-
-    acceptedFiles.forEach(file => reader.readAsBinaryString(file));
-  }, []);
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
   const oldStyle = cloneDeep(props.style);
   let newStyle = Object.assign(oldStyle, { position: 'fixed', top: 580 });
-
   return (
     <FilesConsumer>
       {context => (
-        <div {...getRootProps()} style={newStyle}>
-          <input {...getInputProps()} disabled={!context.filesLoaded || !context.oneSelected} />
-          <Card className={props.classes.card}>
-            <CardContent className={props.classes.cardContent}>
-              <Typography>Drag 'n' drop an image here, or click to select a file</Typography>
-            </CardContent>
-          </Card>
-        </div>
+        <>
+          {context.imageLoaded ? (
+            <div style={newStyle}>
+              <img src="http://localhost:3000/cover.jpg" width={230} height={200} />
+            </div>
+          ) : (
+            <div style={newStyle}>
+              <Card className={props.classes.card}>
+                <CardContent className={props.classes.cardContent}>
+                  <Button
+                    disabled={!context.filesLoaded || !context.oneSelected}
+                    variant="outlined"
+                    color="inherit"
+                    className={props.classes.button}
+                    onClick={sendOpenFileDialog}
+                  >
+                    <Typography variant="subtitle1">Click here to open an image</Typography>
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+        </>
       )}
     </FilesConsumer>
   );

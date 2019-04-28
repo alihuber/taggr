@@ -38,8 +38,11 @@ class App extends React.Component {
     super(props);
     this.state = {
       filePaths: [],
+      imagePath: '',
       setLoadedFiles: this.setLoadedFiles,
+      setLoadedImage: this.setLoadedImage,
       filesLoaded: false,
+      imageLoaded: false,
       filesMetadata: [],
       allSelected: false,
       setAllSelected: this.setAllSelected,
@@ -78,6 +81,15 @@ class App extends React.Component {
     this.setState({ filePaths: [...paths], filesLoaded: true, filesMetadata: metadata });
   };
 
+  setLoadedImage = path => {
+    this.setState({ imagePath: path, imageLoaded: true });
+    const currentMetadata = this.state.filesMetadata;
+    currentMetadata.forEach((data, idx) => {
+      data.cover = path;
+    });
+    this.setState({ filesMetadata: currentMetadata });
+  };
+
   setMetadata = data => {
     this.setState({ filesMetadata: data });
   };
@@ -99,6 +111,10 @@ class App extends React.Component {
 
     ipc.on('selected-files', (event, paths) => {
       this.setLoadedFiles(paths);
+    });
+
+    ipc.on('selected-image', (event, paths) => {
+      this.setLoadedImage(paths);
     });
 
     return (

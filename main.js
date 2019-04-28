@@ -4,6 +4,9 @@ const url = require('url');
 const os = require('os');
 const fs = require('fs');
 const path = require('path');
+const ChildProcess = require('child_process');
+const imagesPath = './images/cover.jpg';
+require('./express');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -67,6 +70,11 @@ function createWindow() {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     mainWindow = null;
+    try {
+      fs.unlinkSync(imagesPath);
+    } catch (err) {
+      console.log('error removing cover file..');
+    }
   });
 }
 
@@ -96,9 +104,6 @@ function handleSquirrelEvent() {
   if (process.argv.length === 1) {
     return false;
   }
-
-  const ChildProcess = require('child_process');
-  const path = require('path');
 
   const appFolder = path.resolve(process.execPath, '..');
   const rootAtomFolder = path.resolve(appFolder, '..');
@@ -188,6 +193,7 @@ ipcMain.on('open-file-dialog-for-files', function(event) {
     detail: 'File given was no .mp3 file!',
   };
   if (os.platform() === 'linux' || os.platform() === 'win32') {
+    // TODO: ???
     dialog.showOpenDialog(
       {
         properties: ['openFile'],
@@ -227,6 +233,55 @@ ipcMain.on('open-file-dialog-for-files', function(event) {
                 });
                 event.sender.send('selected-files', collectedFiles);
               });
+            }
+          });
+        }
+      }
+    );
+  }
+});
+
+ipcMain.on('open-file-dialog-for-image', function(event) {
+  const dialogOpts = {
+    type: 'info',
+    buttons: ['Ok'],
+    title: 'Error',
+    detail: 'File given was no image file!',
+  };
+  if (os.platform() === 'linux' || os.platform() === 'win32') {
+    // TODO: ???
+    dialog.showOpenDialog(
+      {
+        properties: ['openFile'],
+      },
+      function(files) {
+        if (files) event.sender.send('selected-image', files[0]);
+      }
+    );
+  } else {
+    dialog.showOpenDialog(
+      {
+        properties: ['openFile'],
+      },
+      function(files) {
+        if (files) {
+          fs.stat(files[0], (err, stats) => {
+            if (stats.isFile()) {
+              const ending = path.extname(files[0]);
+              if (!['.jpg', '.jpeg'].includes(ending)) {
+                dialog.showMessageBox(dialogOpts, () => {});
+              } else {
+                try {
+                  fs.unlinkSync(imagesPath);
+                } catch (err) {
+                  console.log('error removing cover file..');
+                }
+                fs.copyFile(files[0], imagesPath, err => {
+                  if (err) throw err;
+                  console.log('copied cover file');
+                });
+                event.sender.send('selected-image', [files[0]]);
+              }
             }
           });
         }
