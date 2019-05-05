@@ -7,7 +7,6 @@ import last from 'lodash/last';
 import { FilesProvider } from '../contexts/FilesContext';
 import AppMenu from './AppMenu';
 import Layout from './Layout';
-import '../index.css';
 import '../assets/css/App.css';
 
 const styles = {
@@ -56,6 +55,7 @@ class App extends React.Component {
 
   _generateMetadata = paths => {
     const metadata = [];
+    // TODO: read in already set metadata
     paths.forEach(path => {
       const fileName = last(path.split('/'));
       const obj = {

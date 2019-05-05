@@ -16,6 +16,7 @@ const styles = theme => ({
 class AttributeInput extends React.Component {
   handleBlur = (fieldName, event, filesContext) => {
     const { filesMetadata } = filesContext;
+    // TODO: if artist copy over to albumArtist
     filesMetadata.forEach(data => {
       if (data.selected) {
         data[fieldName] = event.target.value;

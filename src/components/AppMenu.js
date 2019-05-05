@@ -171,6 +171,7 @@ class AppMenu extends React.Component {
                       <FormatListNumberedIcon />
                     </IconButton>
                   </Tooltip>
+                  {/* TODO: make filename schema editable */}
                   <Tooltip title="Set title from file name">
                     <IconButton
                       className={classes.menuButton}
@@ -183,6 +184,7 @@ class AppMenu extends React.Component {
                     </IconButton>
                   </Tooltip>
                   <div className={classes.grow} />
+                  {/* TODO: switch theme */}
                   {<BottomNavigationAction className={classes.statusIcon} label={loadedStr} icon={<MusicNoteIcon />} disabled showLabel />}
                   {
                     <BottomNavigationAction

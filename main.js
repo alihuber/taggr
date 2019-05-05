@@ -6,6 +6,7 @@ const os = require('os');
 const fs = require('fs');
 const path = require('path');
 const ChildProcess = require('child_process');
+// TODO: support as many paths as files loaded
 const imagesPath = './images/cover.jpg';
 require('./express');
 
@@ -194,7 +195,7 @@ ipcMain.on('open-file-dialog-for-files', function(event) {
     detail: 'File given was no .mp3 file!',
   };
   if (os.platform() === 'linux' || os.platform() === 'win32') {
-    // TODO: ???
+    // TODO: test with other platforms
     dialog.showOpenDialog(
       {
         properties: ['openFile'],
@@ -250,7 +251,7 @@ ipcMain.on('open-file-dialog-for-image', function(event) {
     detail: 'File given was no image file!',
   };
   if (os.platform() === 'linux' || os.platform() === 'win32') {
-    // TODO: ???
+    // TODO: test with other platforms
     dialog.showOpenDialog(
       {
         properties: ['openFile'],
@@ -307,10 +308,13 @@ ipcMain.on('save-metadata', function(event, context) {
     detail: 'Files sucessfully saved',
   };
   const length = context.filePaths.length;
+  let coverBuffer;
   context.filePaths.forEach((filepath, idx) => {
     const songBuffer = fs.readFileSync(filepath);
     const metadata = context.filesMetadata[idx];
-    const coverBuffer = fs.readFileSync(metadata.cover);
+    if (metadata.cover.length !== 0) {
+      coverBuffer = fs.readFileSync(metadata.cover);
+    }
     const title = metadata.title;
     const album = metadata.album;
     const artist = [metadata.artist];
@@ -338,12 +342,14 @@ ipcMain.on('save-metadata', function(event, context) {
       .setFrame('COMM', {
         description: 'Comment',
         text: comment,
-      })
-      .setFrame('APIC', {
+      });
+    if (coverBuffer) {
+      writer.setFrame('APIC', {
         type: 3, // cover front
         data: coverBuffer,
         description: 'Cover',
       });
+    }
     writer.addTag();
 
     const taggedSongBuffer = Buffer.from(writer.arrayBuffer);
