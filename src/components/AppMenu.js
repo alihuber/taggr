@@ -96,6 +96,7 @@ class AppMenu extends React.Component {
   handleCopyFilenames = filesContext => {
     const { filesMetadata } = filesContext;
     filesMetadata.forEach((data, idx) => {
+      // TODO: error message on non-parseable files
       data.title = data.fileName
         .split('-')[1]
         .split('.mp3')[0]
@@ -111,6 +112,7 @@ class AppMenu extends React.Component {
         if (data.selected) {
           let numbering = String(idx + 1);
           if (storeZeros) {
+            // TODO: also pad numbers when length < 10
             const maxLength = String(filesMetadata.length).length;
             numbering = numbering.padStart(maxLength, '0');
           }
@@ -145,6 +147,7 @@ class AppMenu extends React.Component {
       <AppBar position="static" style={style}>
         <FilesConsumer>
           {filesContext => {
+            // TODO: better status strings, files selected/saved, errors etc.
             const loadedStr = `Files loaded: ${filesContext.filePaths.length}`;
             return (
               <>

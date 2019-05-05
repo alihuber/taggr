@@ -14,15 +14,20 @@ const styles = theme => ({
 });
 
 class AttributeInput extends React.Component {
-  handleBlur = (fieldName, event, filesContext) => {
+  handleBlur = (fieldName, event, filesContext, setFieldValue) => {
     const { filesMetadata } = filesContext;
-    // TODO: if artist copy over to albumArtist
     filesMetadata.forEach(data => {
+      const newValue = event.target.value;
       if (data.selected) {
-        data[fieldName] = event.target.value;
+        data[fieldName] = newValue;
+        if (fieldName === 'artist' && data.albumArtist.length === 0) {
+          data.albumArtist = newValue;
+          setFieldValue('albumArtist', newValue);
+        }
       }
     });
     filesContext.setMetadata(filesMetadata);
+    setFieldValue(fieldName, event.target.value);
   };
 
   handleChange = (fieldName, event, setFieldValue) => {
@@ -92,7 +97,7 @@ class AttributeInput extends React.Component {
           id="component-simple"
           value={value}
           onChange={event => this.handleChange(type, event, setFieldValue)}
-          onBlur={event => this.handleBlur(type, event, filesContext)}
+          onBlur={event => this.handleBlur(type, event, filesContext, setFieldValue)}
         />
       </FormControl>
     );
