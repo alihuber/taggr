@@ -1,9 +1,8 @@
 import '../assets/css/App.css';
 const ipc = require('electron').ipcRenderer;
-import React, { useState } from 'react';
+import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
-import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
@@ -11,16 +10,12 @@ import SaveIcon from '@material-ui/icons/Save';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import FormatListNumberedIcon from '@material-ui/icons/FormatListNumbered';
 import Tooltip from '@material-ui/core/Tooltip';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import MusicNoteIcon from '@material-ui/icons/MusicNote';
 import ClearIcon from '@material-ui/icons/Clear';
+
 import { FilesConsumer } from '../contexts/FilesContext';
+import NumberingDialog from './NumberingDialog';
 
 const styles = theme => ({
   flex: {
@@ -49,41 +44,6 @@ const styles = theme => ({
   },
 });
 
-const NumberingDialog = ({ open, handleClose, filesContext }) => {
-  const [storeLeadingZeros, setStoreLeadingZeros] = useState(false);
-  const [storeTrackCount, setStoreTrackCount] = useState(false);
-
-  const storeZeros = storeLeadingZeros;
-  const storeTracks = storeTrackCount;
-
-  const reset = () => {
-    setStoreLeadingZeros(false);
-    setStoreTrackCount(false);
-    handleClose();
-  };
-
-  return (
-    <Dialog open={open} onClose={reset} aria-labelledby="form-dialog-title">
-      <DialogTitle id="form-dialog-title">Numbering</DialogTitle>
-      <DialogContent>
-        <FormControlLabel
-          control={<Checkbox checked={storeZeros} onChange={() => setStoreLeadingZeros(!storeZeros)} value="StoreLeadingZeros" />}
-          label="Store leading zeros"
-        />
-        <FormControlLabel
-          control={<Checkbox checked={storeTracks} onChange={() => setStoreTrackCount(!storeTracks)} value="StoreTrackCount" />}
-          label="Store track count"
-        />
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={() => handleClose(storeZeros, storeTracks, filesContext)} color="primary">
-          Apply
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-};
-
 class AppMenu extends React.Component {
   state = {
     numberDialogOpen: false,
@@ -105,25 +65,39 @@ class AppMenu extends React.Component {
     filesContext.setMetadata(filesMetadata);
   };
 
-  handleNumberClose = (storeZeros = false, storeTracks = false, filesContext = {}) => {
+  handleNumberingDialogClose = (storeZeros = false, storeTracks = false, filesContext = {}) => {
     const { filesMetadata } = filesContext;
     if (filesMetadata) {
       filesMetadata.forEach((data, idx) => {
         if (data.selected) {
-          let numbering = String(idx + 1);
-          if (storeZeros) {
-            // TODO: also pad numbers when length < 10
-            const maxLength = String(filesMetadata.length).length;
-            numbering = numbering.padStart(maxLength, '0');
+          let trackNum = String(idx + 1);
+          let trackCount = String(filesMetadata.length);
+          let maxLength = String(filesMetadata.length).length;
+          if (maxLength === 1) {
+            maxLength = 2;
           }
-          if (storeTracks) {
-            numbering += `/${filesMetadata.length}`;
+          if (storeZeros && storeTracks) {
+            trackNum = trackNum.padStart(maxLength, '0');
+            if (filesMetadata.length < 10) {
+              trackCount = trackCount.padStart(2, '0');
+            }
+            data.numbering = `${trackNum}/${trackCount}`;
           }
-          data.numbering = numbering;
+          if (storeZeros && !storeTracks) {
+            trackNum = trackNum.padStart(maxLength, '0');
+            data.numbering = trackNum;
+          }
+          if (!storeZeros && storeTracks) {
+            data.numbering = `${trackNum}/${trackCount}`;
+          }
+          if (!storeZeros && !storeTracks) {
+            data.numbering = trackNum;
+          }
         }
       });
       filesContext.setMetadata(filesMetadata);
     }
+
     this.setState({ numberDialogOpen: false });
   };
 
@@ -195,6 +169,7 @@ class AppMenu extends React.Component {
                       label="Clear"
                       icon={<ClearIcon />}
                       showLabel
+                      value={2}
                       onClick={() => this.handleClear(filesContext)}
                     />
                   }
@@ -205,7 +180,11 @@ class AppMenu extends React.Component {
                     </Typography>
                   </div>
                 </Toolbar>
-                <NumberingDialog open={this.state.numberDialogOpen} handleClose={this.handleNumberClose} filesContext={filesContext} />
+                <NumberingDialog
+                  open={this.state.numberDialogOpen}
+                  handleClose={this.handleNumberingDialogClose}
+                  filesContext={filesContext}
+                />
               </>
             );
           }}
@@ -214,4 +193,5 @@ class AppMenu extends React.Component {
     );
   }
 }
+
 export default withStyles(styles)(AppMenu);

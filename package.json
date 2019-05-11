@@ -9,7 +9,9 @@
     "build": "npx rimraf dist && webpack --config=./internals/webpack/webpack.prod.js",
     "package": "npx rimraf dist && webpack --config=./internals/webpack/webpack.prod.js",
     "postpackage": "npx rimraf builds && electron-packager ./ Taggr --out=./builds --asar",
-    "build-win": "node ./build-win.js"
+    "build-win": "node ./build-win.js",
+    "test": "jest --coverage",
+    "debug-test": "node --inspect-brk node_modules/.bin/jest --runInBand"
   },
   "productName": "Taggr",
   "main": "main.js",
@@ -24,24 +26,44 @@
     "@babel/preset-react": "^7.0.0",
     "@material-ui/core": "^3.9.3",
     "@material-ui/icons": "^3.0.2",
+    "babel-jest": "^24.8.0",
     "babel-loader": "^8.0.5",
     "browser-id3-writer": "^4.1.0",
     "css-loader": "^2.1.1",
     "electron": "^4.0.8",
     "electron-packager": "^13.1.1",
     "electron-winstaller": "^3.0.4",
+    "enzyme": "^3.9.0",
+    "enzyme-adapter-react-16": "^1.13.0",
     "express": "^4.16.4",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
+    "jest": "^24.8.0",
     "lodash": "^4.17.11",
     "npm-check-updates": "^3.1.9",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-flexbox-grid": "^2.1.2",
     "react-sticky": "^6.0.3",
+    "react-test-renderer": "^16.8.6",
     "style-loader": "^0.23.1",
     "webpack": "^4.30.0",
     "webpack-cli": "^3.3.2",
     "webpack-dev-server": "^3.3.1"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js"
+    ],
+    "moduleDirectories": [
+      "node_modules"
+    ],
+    "moduleNameMapper": {
+      "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js",
+      "\\.(gif|ttf|eot|svg)$": "<rootDir>/__mocks__/fileMock.js"
+    },
+    "setupFiles": [
+      "<rootDir>/enzyme.config.js"
+    ]
   }
 }
