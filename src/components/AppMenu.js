@@ -65,7 +65,6 @@ class AppMenu extends React.Component {
       try {
         filesMetadata.forEach((data, idx) => {
           const filename = data.fileName;
-          debugger;
           data.title = filename.match(regExp)[1].trim();
         });
         filesContext.setMetadata(filesMetadata);

@@ -53,33 +53,41 @@ class App extends React.Component {
     };
   }
 
-  _generateMetadata = paths => {
+  _generateMetadata = fileData => {
     const metadata = [];
-    // TODO: read in already set metadata
-    paths.forEach(path => {
-      const fileName = last(path.split('/'));
-      const obj = {
-        numbering: '',
-        title: '',
-        artist: '',
-        fileName,
-        albumArtist: '',
-        album: '',
-        genre: '',
-        year: '',
-        comment: '',
-        cover: '',
-        selected: false,
-      };
-      metadata.push(obj);
-    });
+    if (fileData.presentMetadata.length !== 0) {
+      fileData.presentMetadata.forEach(obj => {
+        metadata.push(obj);
+      });
+      if (fileData.presentMetadata[0].cover.length !== 0) {
+        this.setState({ imagePath: fileData.presentMetadata[0].cover, imageLoaded: true });
+      }
+    } else {
+      fileData.paths.forEach(path => {
+        const fileName = last(path.split('/'));
+        const obj = {
+          numbering: '',
+          title: '',
+          artist: '',
+          fileName,
+          albumArtist: '',
+          album: '',
+          genre: '',
+          year: '',
+          comment: '',
+          cover: '',
+          selected: false,
+        };
+        metadata.push(obj);
+      });
+    }
     return metadata;
   };
 
-  setLoadedFiles = paths => {
-    if (paths.length !== 0) {
-      const metadata = this._generateMetadata(paths);
-      this.setState({ filePaths: [...paths], filesLoaded: true, filesMetadata: metadata });
+  setLoadedFiles = fileData => {
+    if (Object.entries(fileData).length !== 0) {
+      const metadata = this._generateMetadata(fileData);
+      this.setState({ filePaths: fileData.paths, filesLoaded: true, filesMetadata: metadata });
     } else {
       this.setState({ filePaths: [], filesLoaded: false, filesMetadata: [] });
     }
@@ -117,8 +125,8 @@ class App extends React.Component {
   render() {
     const { classes } = this.props;
 
-    ipc.on('selected-files', (event, paths) => {
-      this.setLoadedFiles(paths);
+    ipc.on('selected-files', (event, fileData) => {
+      this.setLoadedFiles(fileData);
     });
 
     ipc.on('selected-image', (event, paths) => {

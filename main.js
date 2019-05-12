@@ -6,8 +6,9 @@ const os = require('os');
 const fs = require('fs');
 const path = require('path');
 const ChildProcess = require('child_process');
-// TODO: support as many paths as files loaded
 const imagesPath = './images/cover.jpg';
+const ID3Parser = require('id3-parser');
+const last = require('lodash').last;
 require('./express');
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -161,12 +162,12 @@ function handleSquirrelEvent() {
   }
 }
 
-const DOMAIN = 'http://192.168.0.15:9999';
+const DOMAIN = '<update-domain-here>';
 const suffix = process.platform === 'darwin' ? `/RELEASES.json?method=JSON&version=${app.getVersion()}` : '';
 // this just has to point to an HTTP server containing the "releases" and nupkg files
 if (!dev) {
   autoUpdater.setFeedURL({
-    url: `${DOMAIN}/Taggr/bd9d0cf6ac3b199969913dd79729f854/${process.platform}/${process.arch}${suffix}`,
+    url: `${DOMAIN}/Taggr/<ID>/${process.platform}/${process.arch}${suffix}`,
     serverType: 'json',
   });
   setInterval(() => {
@@ -186,6 +187,41 @@ if (!dev) {
     });
   });
 }
+
+const buildImage = imageBuffer => {
+  fs.writeFileSync(imagesPath, imageBuffer);
+};
+
+const _loadMetadata = filePaths => {
+  const metadata = [];
+  filePaths.forEach((filepath, idx) => {
+    const songBuffer = fs.readFileSync(filepath);
+    const data = ID3Parser.parse(songBuffer);
+    const fileName = last(filepath.split('/'));
+    const comment = data.comments[0] && data.comments[0].value;
+    let cover = '';
+    if (data.image && data.image.data) {
+      buildImage(data.image.data);
+      cover = imagesPath;
+    }
+    const obj = {
+      numbering: data.track,
+      title: data.title,
+      artist: data.band,
+      fileName,
+      albumArtist: data.artist,
+      album: data.album,
+      genre: data.genre,
+      year: data.year,
+      comment,
+      cover,
+      selected: false,
+    };
+    metadata.push(obj);
+  });
+
+  return metadata;
+};
 
 ipcMain.on('open-file-dialog-for-files', function(event) {
   const dialogOpts = {
@@ -217,7 +253,10 @@ ipcMain.on('open-file-dialog-for-files', function(event) {
               if (ending !== '.mp3') {
                 dialog.showMessageBox(dialogOpts, () => {});
               } else {
-                event.sender.send('selected-files', [files[0]]);
+                const fileData = {};
+                fileData.paths = [files[0]];
+                fileData.presentMetadata = _loadMetadata([files[0]]);
+                event.sender.send('selected-files', fileData);
               }
             } else if (stats.isDirectory()) {
               fs.readdir(files[0], (err, paths) => {
@@ -225,15 +264,18 @@ ipcMain.on('open-file-dialog-for-files', function(event) {
                   console.log(err);
                   return;
                 }
-                const collectedFiles = [];
+                const collectedPaths = [];
+                const fileData = {};
                 paths.forEach(filePath => {
                   const ending = path.extname(filePath);
                   if (ending !== '.mp3') {
                     return;
                   }
-                  collectedFiles.push(path.join(files[0], filePath));
+                  collectedPaths.push(path.join(files[0], filePath));
                 });
-                event.sender.send('selected-files', collectedFiles);
+                fileData.paths = collectedPaths;
+                fileData.presentMetadata = _loadMetadata(collectedPaths);
+                event.sender.send('selected-files', fileData);
               });
             }
           });
