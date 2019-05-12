@@ -93,7 +93,7 @@ class App extends React.Component {
     }
   };
 
-  setLoadedImage = path => {
+  setLoadedImage = (path, resetImage = false) => {
     if (path.length !== 0) {
       this.setState({ imagePath: path, imageLoaded: true });
       const currentMetadata = this.state.filesMetadata;
@@ -101,6 +101,12 @@ class App extends React.Component {
         data.cover = path;
       });
       this.setState({ filesMetadata: currentMetadata });
+    } else if (resetImage) {
+      const currentMetadata = this.state.filesMetadata;
+      currentMetadata.forEach((data, idx) => {
+        data.cover = '';
+      });
+      this.setState({ imagePath: '', imageLoaded: false, filesMetadata: currentMetadata });
     } else {
       this.setState({ imagePath: '', imageLoaded: false, filesMetadata: [] });
     }
