@@ -1,7 +1,7 @@
 {
   "name": "taggr",
   "version": "0.0.1",
-  "description": "Shameless port of taggr, written in Electron and React",
+  "description": "Shameless port of the 'tagr' id3 tag editor, implemented in Electron and React",
   "scripts": {
     "prod": "npx rimraf dist && webpack --config=./internals/webpack/webpack.prod.js && electron --noDevServer .",
     "debug": "npx rimraf dist && webpack --config=./internals/webpack/webpack.prod.js && electron --inspect-brk --noDevServer .",
