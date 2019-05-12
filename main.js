@@ -292,6 +292,16 @@ ipcMain.on('open-file-dialog-for-image', function(event) {
   }
 });
 
+ipcMain.on('filename-error', function() {
+  const dialogOpts = {
+    type: 'info',
+    buttons: ['Ok'],
+    title: 'Error',
+    detail: 'File names could not be set',
+  };
+  dialog.showMessageBox(dialogOpts, () => {});
+});
+
 ipcMain.on('clear-data', function() {
   try {
     fs.unlinkSync(imagesPath);

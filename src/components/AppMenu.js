@@ -16,6 +16,7 @@ import ClearIcon from '@material-ui/icons/Clear';
 
 import { FilesConsumer } from '../contexts/FilesContext';
 import NumberingDialog from './NumberingDialog';
+import FilenameCopyDialog from './FilenameCopyDialog';
 
 const styles = theme => ({
   flex: {
@@ -47,22 +48,32 @@ const styles = theme => ({
 class AppMenu extends React.Component {
   state = {
     numberDialogOpen: false,
+    filenameCopyDialogOpen: false,
   };
 
   handleNumberClickOpen = () => {
     this.setState({ numberDialogOpen: true });
   };
 
-  handleCopyFilenames = filesContext => {
+  handleFilenameCopyClickOpen = () => {
+    this.setState({ filenameCopyDialogOpen: true });
+  };
+
+  handleFilenameCopyClose = (regExp, filesContext = {}) => {
     const { filesMetadata } = filesContext;
-    filesMetadata.forEach((data, idx) => {
-      // TODO: error message on non-parseable files
-      data.title = data.fileName
-        .split('-')[1]
-        .split('.mp3')[0]
-        .trim();
-    });
-    filesContext.setMetadata(filesMetadata);
+    if (filesMetadata) {
+      try {
+        filesMetadata.forEach((data, idx) => {
+          const filename = data.fileName;
+          debugger;
+          data.title = filename.match(regExp)[1].trim();
+        });
+        filesContext.setMetadata(filesMetadata);
+      } catch (err) {
+        ipc.send('filename-error');
+      }
+    }
+    this.setState({ filenameCopyDialogOpen: false });
   };
 
   handleNumberingDialogClose = (storeZeros = false, storeTracks = false, filesContext = {}) => {
@@ -121,7 +132,6 @@ class AppMenu extends React.Component {
       <AppBar position="static" style={style}>
         <FilesConsumer>
           {filesContext => {
-            // TODO: better status strings, files selected/saved, errors etc.
             const loadedStr = `Files loaded: ${filesContext.filePaths.length}`;
             return (
               <>
@@ -148,13 +158,12 @@ class AppMenu extends React.Component {
                       <FormatListNumberedIcon />
                     </IconButton>
                   </Tooltip>
-                  {/* TODO: make filename schema editable */}
                   <Tooltip title="Set title from file name">
                     <IconButton
                       className={classes.menuButton}
                       color="inherit"
                       aria-label="CopyFilenames"
-                      onClick={() => this.handleCopyFilenames(filesContext)}
+                      onClick={this.handleFilenameCopyClickOpen}
                       disabled={!filesContext.filesLoaded || !filesContext.oneSelected}
                     >
                       <FileCopyIcon />
@@ -183,6 +192,11 @@ class AppMenu extends React.Component {
                 <NumberingDialog
                   open={this.state.numberDialogOpen}
                   handleClose={this.handleNumberingDialogClose}
+                  filesContext={filesContext}
+                />
+                <FilenameCopyDialog
+                  open={this.state.filenameCopyDialogOpen}
+                  handleClose={this.handleFilenameCopyClose}
                   filesContext={filesContext}
                 />
               </>

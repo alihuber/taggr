@@ -1,7 +1,7 @@
 {
   "name": "taggr",
   "version": "0.0.1",
-  "description": "ElectronJS with ReactJS boilerplate",
+  "description": "Shameless port of taggr, written in Electron and React",
   "scripts": {
     "prod": "npx rimraf dist && webpack --config=./internals/webpack/webpack.prod.js && electron --noDevServer .",
     "debug": "npx rimraf dist && webpack --config=./internals/webpack/webpack.prod.js && electron --inspect-brk --noDevServer .",
