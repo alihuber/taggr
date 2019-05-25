@@ -198,7 +198,7 @@ const _loadMetadata = filePaths => {
     const songBuffer = fs.readFileSync(filepath);
     const data = ID3Parser.parse(songBuffer);
     const fileName = last(filepath.split('/'));
-    const comment = data.comments[0] && data.comments[0].value;
+    const comment = data.comments && data.comments[0] && data.comments[0].value;
     let cover = '';
     if (data.image && data.image.data) {
       buildImage(data.image.data);

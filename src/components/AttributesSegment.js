@@ -17,7 +17,7 @@ class AttributesSegment extends React.Component {
         return multipleSelected;
       } else if (filesContext.oneSelected) {
         const data = first(filesMetadata.filter(d => d.selected));
-        return data[fieldName].length !== 0 ? data[fieldName] : fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+        return (data[fieldName] && data[fieldName].length) !== 0 ? data[fieldName] : fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
       } else if (!filesContext.oneSelected && !filesContext.moreThanOneSelected) {
         return '';
       }
@@ -26,7 +26,7 @@ class AttributesSegment extends React.Component {
         return multipleSelected;
       } else if (filesContext.oneSelected) {
         const data = first(filesMetadata.filter(d => d.selected));
-        return data[fieldName].length !== 0 ? data[fieldName] : fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+        return (data[fieldName] && data[fieldName].length) !== 0 ? data[fieldName] : fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
       } else if (!filesContext.oneSelected && !filesContext.moreThanOneSelected) {
         const collectedFields = [];
         filesMetadata.forEach(d => {
