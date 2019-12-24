@@ -26,7 +26,7 @@ const AttributeInput = ({ classes, type, filesLoaded, oneSelected, moreThanOneSe
     metadata.forEach(data => {
       if (selectedIds.includes(data._id)) {
         data[fieldName] = newValue;
-        if (fieldName === 'artist' && data.albumArtist.length === 0) {
+        if (fieldName === 'artist' && (!data.albumArtist || data.albumArtist.length === 0)) {
           data.albumArtist = newValue;
           dispatch({ type: SET_ALBUM_ARTIST_VALUE, payload: newValue });
         }

@@ -1,4 +1,4 @@
-import { SET_FILENAME_DIALOG_OPEN, SET_NUMBERING_DIALOG } from '../actions/types';
+import { SET_FILENAME_DIALOG_OPEN, SET_NUMBERING_DIALOG_OPEN } from '../actions/types';
 
 const initialState = { filenameCopyDialogOpen: false, numberDialogOpen: false };
 
@@ -9,7 +9,7 @@ export default function(state = initialState, action) {
         ...state,
         filenameCopyDialogOpen: !!action.payload,
       };
-    case SET_NUMBERING_DIALOG:
+    case SET_NUMBERING_DIALOG_OPEN:
       return {
         ...state,
         numberDialogOpen: !!action.payload,

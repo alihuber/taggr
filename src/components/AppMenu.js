@@ -17,7 +17,7 @@ import ClearIcon from '@material-ui/icons/Clear';
 
 import {
   SET_FILENAME_DIALOG_OPEN,
-  SET_NUMBERING_DIALOG,
+  SET_NUMBERING_DIALOG_OPEN,
   SET_FILES_LOADED,
   SET_FILE_PATHS,
   SET_FILES_METADATA,
@@ -79,41 +79,39 @@ const AppMenu = ({ classes, style }) => {
     dispatch({ type: SET_FILENAME_DIALOG_OPEN, payload: false });
   };
 
-  // handleNumberingDialogClose = (storeZeros = false, storeTracks = false, filesContext = {}) => {
-  //   const { filesMetadata } = filesContext;
-  //   if (filesMetadata) {
-  //     filesMetadata.forEach((data, idx) => {
-  //       if (data.selected) {
-  //         let trackNum = String(idx + 1);
-  //         let trackCount = String(filesMetadata.length);
-  //         let maxLength = String(filesMetadata.length).length;
-  //         if (maxLength === 1) {
-  //           maxLength = 2;
-  //         }
-  //         if (storeZeros && storeTracks) {
-  //           trackNum = trackNum.padStart(maxLength, '0');
-  //           if (filesMetadata.length < 10) {
-  //             trackCount = trackCount.padStart(2, '0');
-  //           }
-  //           data.numbering = `${trackNum}/${trackCount}`;
-  //         }
-  //         if (storeZeros && !storeTracks) {
-  //           trackNum = trackNum.padStart(maxLength, '0');
-  //           data.numbering = trackNum;
-  //         }
-  //         if (!storeZeros && storeTracks) {
-  //           data.numbering = `${trackNum}/${trackCount}`;
-  //         }
-  //         if (!storeZeros && !storeTracks) {
-  //           data.numbering = trackNum;
-  //         }
-  //       }
-  //     });
-  //     filesContext.setMetadata(filesMetadata);
-  //   }
-
-  //   this.setState({ numberDialogOpen: false });
-  // };
+  const handleNumberingDialogClose = (storeZeros = false, storeTracks = false) => {
+    if (workingMetadata) {
+      workingMetadata.forEach((data, idx) => {
+        if (data.selected) {
+          let trackNum = String(idx + 1);
+          let trackCount = String(workingMetadata.length);
+          let maxLength = String(workingMetadata.length).length;
+          if (maxLength === 1) {
+            maxLength = 2;
+          }
+          if (storeZeros && storeTracks) {
+            trackNum = trackNum.padStart(maxLength, '0');
+            if (workingMetadata.length < 10) {
+              trackCount = trackCount.padStart(2, '0');
+            }
+            data.numbering = `${trackNum}/${trackCount}`;
+          }
+          if (storeZeros && !storeTracks) {
+            trackNum = trackNum.padStart(maxLength, '0');
+            data.numbering = trackNum;
+          }
+          if (!storeZeros && storeTracks) {
+            data.numbering = `${trackNum}/${trackCount}`;
+          }
+          if (!storeZeros && !storeTracks) {
+            data.numbering = trackNum;
+          }
+        }
+      });
+      dispatch({ type: SET_WORKING_METADATA, payload: workingMetadata });
+    }
+    dispatch({ type: SET_NUMBERING_DIALOG_OPEN, payload: false });
+  };
 
   // handleSave = filesContext => {
   //   ipc.send('save-metadata', filesContext);
@@ -130,7 +128,7 @@ const AppMenu = ({ classes, style }) => {
 
   return (
     <>
-      <NumberingDialog open={numberDialogOpen} handleClose={() => console.log('close')} />
+      <NumberingDialog open={numberDialogOpen} handleClose={handleNumberingDialogClose} />
       <FilenameCopyDialog open={filenameCopyDialogOpen} handleClose={handleFilenameCopyClose} />
       <AppBar position="static" style={style}>
         <Toolbar variant="dense">
@@ -144,7 +142,7 @@ const AppMenu = ({ classes, style }) => {
               className={classes.menuButton}
               color="inherit"
               aria-label="Numbering"
-              onClick={() => dispatch({ type: SET_NUMBERING_DIALOG, payload: true })}
+              onClick={() => dispatch({ type: SET_NUMBERING_DIALOG_OPEN, payload: true })}
             >
               <FormatListNumberedIcon />
             </IconButton>

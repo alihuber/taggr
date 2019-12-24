@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -8,8 +9,8 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 
 const NumberingDialog = ({ open, handleClose }) => {
-  const [storeLeadingZeros, setStoreLeadingZeros] = useState(false);
-  const [storeTrackCount, setStoreTrackCount] = useState(false);
+  const [storeLeadingZeros, setStoreLeadingZeros] = useState(true);
+  const [storeTrackCount, setStoreTrackCount] = useState(true);
 
   const storeZeros = storeLeadingZeros;
   const storeTracks = storeTrackCount;
@@ -40,6 +41,11 @@ const NumberingDialog = ({ open, handleClose }) => {
       </DialogActions>
     </Dialog>
   );
+};
+
+NumberingDialog.propTypes = {
+  open: PropTypes.bool.isRequired,
+  handleClose: PropTypes.func.isRequired,
 };
 
 export default NumberingDialog;
