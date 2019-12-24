@@ -14,10 +14,9 @@ ipcMain.on('save-metadata', function(event, filePaths, metadata) {
   filePaths.forEach((filepath, idx) => {
     const songBuffer = fs.readFileSync(filepath);
     const data = metadata[idx];
-    // TODO: cover
-    // if (data.cover.length !== 0) {
-    //   coverBuffer = fs.readFileSync(metadata.cover);
-    // }
+    if (data.cover.length !== 0) {
+      coverBuffer = Buffer.from(data.cover, 'base64');
+    }
     const title = data.title;
     const album = data.album;
     const artist = [data.artist];
