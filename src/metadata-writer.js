@@ -17,14 +17,16 @@ ipcMain.on('save-metadata', function(event, filePaths, metadata) {
     if (data.cover.length !== 0) {
       coverBuffer = Buffer.from(data.cover, 'base64');
     }
-    const title = data.title;
-    const album = data.album;
-    const artist = [data.artist];
-    const albumArtist = data.albumArtist;
-    const genre = [data.genre];
-    const year = Number(data.year);
-    const comment = data.comment;
-    const numbering = data.numbering;
+    const setArtist = data.artist;
+    const setGenre = data.genre;
+    const title = data.title || '';
+    const album = data.album || '';
+    const artist = (setArtist && [setArtist]) || [''];
+    const albumArtist = data.albumArtist || '';
+    const genre = (setGenre && [setGenre]) || [''];
+    const year = (data.year && Number(data.year)) || Number(2000);
+    const comment = data.comment || '';
+    const numbering = data.numbering || '';
     const writer = new ID3Writer(songBuffer);
     // TIT2 (song title)
     // TALB (album title)
