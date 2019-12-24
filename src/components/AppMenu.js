@@ -113,9 +113,9 @@ const AppMenu = ({ classes, style }) => {
     dispatch({ type: SET_NUMBERING_DIALOG_OPEN, payload: false });
   };
 
-  // handleSave = filesContext => {
-  //   ipc.send('save-metadata', filesContext);
-  // };
+  const handleSave = () => {
+    ipc.send('save-metadata', filePaths, workingMetadata);
+  };
 
   const handleClear = () => {
     ipc.send('clear-data');
@@ -133,7 +133,7 @@ const AppMenu = ({ classes, style }) => {
       <AppBar position="static" style={style}>
         <Toolbar variant="dense">
           <Tooltip title="Save to disk">
-            <IconButton className={classes.menuButton} color="inherit" aria-label="Save" onClick={() => console.log('handleSave')}>
+            <IconButton className={classes.menuButton} color="inherit" aria-label="Save" onClick={handleSave}>
               <SaveIcon />
             </IconButton>
           </Tooltip>

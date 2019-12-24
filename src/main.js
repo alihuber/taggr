@@ -1,5 +1,6 @@
 const { app, BrowserWindow, dialog, autoUpdater } = require('electron');
 require('./files-dialog');
+require('./metadata-writer');
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {

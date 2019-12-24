@@ -74,6 +74,7 @@
     "forge": "./forge.config.js"
   },
   "dependencies": {
+    "browser-id3-writer": "^4.3.0",
     "electron-squirrel-startup": "^1.0.0",
     "id3-parser": "^2.0.0",
     "uuid": "^3.3.3"
