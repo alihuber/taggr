@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import { useDispatch } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -57,6 +59,12 @@ const FilenameCopyDialog = ({ open, handleClose, classes }) => {
       </DialogActions>
     </Dialog>
   );
+};
+
+FilenameCopyDialog.propTypes = {
+  classes: PropTypes.object.isRequired,
+  open: PropTypes.bool.isRequired,
+  handleFilenameCopyClose: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles)(FilenameCopyDialog);

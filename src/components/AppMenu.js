@@ -16,12 +16,14 @@ import MusicNoteIcon from '@material-ui/icons/MusicNote';
 import ClearIcon from '@material-ui/icons/Clear';
 
 import {
-  SET_FILENAME_DIALOG,
+  SET_FILENAME_DIALOG_OPEN,
   SET_NUMBERING_DIALOG,
   SET_FILES_LOADED,
   SET_FILE_PATHS,
   SET_FILES_METADATA,
   CLEAR_DATA,
+  CREATE_MESSAGE,
+  SET_WORKING_METADATA,
 } from '../actions/types';
 import NumberingDialog from './NumberingDialog';
 import FilenameCopyDialog from './FilenameCopyDialog';
@@ -57,24 +59,25 @@ const AppMenu = ({ classes, style }) => {
   const numberDialogOpen = useSelector(state => state.filenameDialogs.numberDialogOpen);
   const filenameCopyDialogOpen = useSelector(state => state.filenameDialogs.filenameCopyDialogOpen);
   const filePaths = useSelector(state => state.filesActions.filePaths);
+  const workingMetadata = useSelector(state => state.inputActions.workingMetadata);
   const dispatch = useDispatch();
   const loadedStr = `Songs loaded: ${(filePaths && filePaths.length) || 0}`;
 
-  // handleFilenameCopyClose = (regExp, filesContext = {}) => {
-  //   const { filesMetadata } = filesContext;
-  //   if (filesMetadata) {
-  //     try {
-  //       filesMetadata.forEach((data, idx) => {
-  //         const filename = data.fileName;
-  //         data.title = filename.match(regExp)[1].trim();
-  //       });
-  //       filesContext.setMetadata(filesMetadata);
-  //     } catch (err) {
-  //       ipc.send('filename-error');
-  //     }
-  //   }
-  //   this.setState({ filenameCopyDialogOpen: false });
-  // };
+  const handleFilenameCopyClose = regExp => {
+    if (workingMetadata && regExp) {
+      try {
+        workingMetadata.forEach((data, idx) => {
+          const filename = data.fileName;
+          data.title = filename.match(regExp)[1].trim();
+        });
+        dispatch({ type: SET_WORKING_METADATA, payload: workingMetadata });
+      } catch (err) {
+        console.log(err);
+        dispatch({ type: CREATE_MESSAGE, payload: { errorMessage: 'Error setting filenames' } });
+      }
+    }
+    dispatch({ type: SET_FILENAME_DIALOG_OPEN, payload: false });
+  };
 
   // handleNumberingDialogClose = (storeZeros = false, storeTracks = false, filesContext = {}) => {
   //   const { filesMetadata } = filesContext;
@@ -128,7 +131,7 @@ const AppMenu = ({ classes, style }) => {
   return (
     <>
       <NumberingDialog open={numberDialogOpen} handleClose={() => console.log('close')} />
-      <FilenameCopyDialog open={filenameCopyDialogOpen} handleClose={() => console.log('close')} />
+      <FilenameCopyDialog open={filenameCopyDialogOpen} handleClose={handleFilenameCopyClose} />
       <AppBar position="static" style={style}>
         <Toolbar variant="dense">
           <Tooltip title="Save to disk">
@@ -151,7 +154,7 @@ const AppMenu = ({ classes, style }) => {
               className={classes.menuButton}
               color="inherit"
               aria-label="CopyFilenames"
-              onClick={() => dispatch({ type: SET_FILENAME_DIALOG, payload: true })}
+              onClick={() => dispatch({ type: SET_FILENAME_DIALOG_OPEN, payload: true })}
             >
               <FileCopyIcon />
             </IconButton>

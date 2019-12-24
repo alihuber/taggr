@@ -1,6 +1,6 @@
 export const CREATE_MESSAGE = 'CREATE MESSAGE';
 // filename dialogs actions
-export const SET_FILENAME_DIALOG = 'SET_FILENAME_DIALOG';
+export const SET_FILENAME_DIALOG_OPEN = 'SET_FILENAME_DIALOG_OPEN';
 export const SET_NUMBERING_DIALOG = 'SET_NUMBERING_DIALOG';
 // files actions
 export const SET_FILES_LOADED = 'SET_FILES_LOADED';
