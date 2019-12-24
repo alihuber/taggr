@@ -5,7 +5,6 @@ export const SET_NUMBERING_DIALOG_OPEN = 'SET_NUMBERING_DIALOG_OPEN';
 // files actions
 export const SET_FILES_LOADED = 'SET_FILES_LOADED';
 export const SET_FILE_PATHS = 'SET_FILE_PATHS';
-export const SET_FILES_METADATA = 'SET_FILES_METADATA';
 // input actions
 export const CLEAR_DATA = 'CLEAR_DATA';
 export const SET_WORKING_METADATA = 'SET_WORKING_METADATA';

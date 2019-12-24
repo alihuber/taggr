@@ -3,8 +3,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import cloneDeep from 'lodash/cloneDeep';
 import AttributeInput from './AttributeInput';
 
-const allEqual = arr => arr.every(v => v === arr[0]);
-
 const AttributesSegment = ({ style }) => {
   const filesLoaded = useSelector(state => state.filesActions.filesLoaded);
   const selectionState = useSelector(state => state.inputActions);

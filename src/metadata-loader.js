@@ -11,11 +11,10 @@ const _loadMetadata = filePaths => {
     const fileName = last(filepath.split('/'));
     const comment = data.comments && data.comments[0] && data.comments[0].value;
     let cover = '';
-    // TODO: Image handling
-    // if (data.image && data.image.data) {
-    //   buildImage(data.image.data);
-    //   cover = imagesPath;
-    // }
+    if (data.image && data.image.data) {
+      const str = data.image.data.toString('base64');
+      cover = str;
+    }
     const obj = {
       _id: uuidv4(),
       idx,

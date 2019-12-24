@@ -20,7 +20,6 @@ import {
   SET_NUMBERING_DIALOG_OPEN,
   SET_FILES_LOADED,
   SET_FILE_PATHS,
-  SET_FILES_METADATA,
   CLEAR_DATA,
   CREATE_MESSAGE,
   SET_WORKING_METADATA,
@@ -121,9 +120,7 @@ const AppMenu = ({ classes, style }) => {
     ipc.send('clear-data');
     dispatch({ type: SET_FILE_PATHS, payload: [] });
     dispatch({ type: SET_FILES_LOADED, payload: false });
-    dispatch({ type: SET_FILES_METADATA, payload: [] });
     dispatch({ type: CLEAR_DATA, payload: true });
-    // filesContext.setLoadedImage('');
   };
 
   return (

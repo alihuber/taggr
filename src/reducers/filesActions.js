@@ -1,7 +1,6 @@
-import { SET_FILES_LOADED, SET_FILE_PATHS, SET_FILES_METADATA } from '../actions/types';
-import cloneDeep from 'lodash/cloneDeep';
+import { SET_FILES_LOADED, SET_FILE_PATHS } from '../actions/types';
 
-const initialState = { filesLoaded: false, filePaths: [] };
+const initialState = { imageLoaded: false, filesLoaded: false, filePaths: [] };
 
 export default function(state = initialState, action) {
   switch (action.type) {
@@ -14,11 +13,6 @@ export default function(state = initialState, action) {
       return {
         ...state,
         filePaths: action.payload,
-      };
-    case SET_FILES_METADATA:
-      return {
-        ...state,
-        metadata: cloneDeep(action.payload),
       };
     default:
       return state;
