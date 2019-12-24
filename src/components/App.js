@@ -1,13 +1,23 @@
 const ipc = require('electron').ipcRenderer;
 import React from 'react';
+import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
+import { useSelector, useDispatch } from 'react-redux';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import { StickyContainer, Sticky } from 'react-sticky';
-import last from 'lodash/last';
-import { FilesProvider } from '../contexts/FilesContext';
+import Button from '@material-ui/core/Button';
+import { Provider as AlertProvider } from 'react-alert';
+import AlertTemplate from 'react-alert-template-basic';
+import Alerts from './layout/Alerts';
+import Layout from './layout/Layout';
 import AppMenu from './AppMenu';
-import Layout from './Layout';
-import '../assets/css/App.css';
+import '../index.css';
+import { SET_FILES_LOADED, SET_FILE_PATHS, SET_WORKING_METADATA } from '../actions/types';
+
+const alertOptions = {
+  timeout: 2000,
+  position: 'bottom center',
+};
 
 const styles = {
   root: {
@@ -32,126 +42,31 @@ const theme = createMuiTheme({
   },
 });
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      filePaths: [],
-      imagePath: '',
-      setLoadedFiles: this.setLoadedFiles,
-      setLoadedImage: this.setLoadedImage,
-      filesLoaded: false,
-      imageLoaded: false,
-      filesMetadata: [],
-      allSelected: false,
-      setAllSelected: this.setAllSelected,
-      setMetadata: this.setMetadata,
-      moreThanOneSelected: false,
-      oneSelected: false,
-      setMoreThanOneSelected: this.setMoreThanOneSelected,
-      setOneSelected: this.setOneSelected,
-    };
-  }
+const App = ({ classes }) => {
+  const dispatch = useDispatch();
+  ipc.on('selected-files', (event, fileData) => {
+    dispatch({ type: SET_FILE_PATHS, payload: fileData.paths });
+    dispatch({ type: SET_WORKING_METADATA, payload: fileData.presentMetadata });
+    dispatch({ type: SET_FILES_LOADED, payload: true });
+  });
 
-  _generateMetadata = fileData => {
-    const metadata = [];
-    if (fileData.presentMetadata.length !== 0) {
-      fileData.presentMetadata.forEach(obj => {
-        metadata.push(obj);
-      });
-      if (fileData.presentMetadata[0].cover.length !== 0) {
-        this.setState({ imagePath: fileData.presentMetadata[0].cover, imageLoaded: true });
-      }
-    } else {
-      fileData.paths.forEach(path => {
-        const fileName = last(path.split('/'));
-        const obj = {
-          numbering: '',
-          title: '',
-          artist: '',
-          fileName,
-          albumArtist: '',
-          album: '',
-          genre: '',
-          year: '',
-          comment: '',
-          cover: '',
-          selected: false,
-        };
-        metadata.push(obj);
-      });
-    }
-    return metadata;
-  };
-
-  setLoadedFiles = fileData => {
-    if (Object.entries(fileData).length !== 0) {
-      const metadata = this._generateMetadata(fileData);
-      this.setState({ filePaths: fileData.paths, filesLoaded: true, filesMetadata: metadata });
-    } else {
-      this.setState({ filePaths: [], filesLoaded: false, filesMetadata: [] });
-    }
-  };
-
-  setLoadedImage = (path, resetImage = false) => {
-    if (path.length !== 0) {
-      this.setState({ imagePath: path, imageLoaded: true });
-      const currentMetadata = this.state.filesMetadata;
-      currentMetadata.forEach((data, idx) => {
-        data.cover = path;
-      });
-      this.setState({ filesMetadata: currentMetadata });
-    } else if (resetImage) {
-      const currentMetadata = this.state.filesMetadata;
-      currentMetadata.forEach((data, idx) => {
-        data.cover = '';
-      });
-      this.setState({ imagePath: '', imageLoaded: false, filesMetadata: currentMetadata });
-    } else {
-      this.setState({ imagePath: '', imageLoaded: false, filesMetadata: [] });
-    }
-  };
-
-  setMetadata = data => {
-    this.setState({ filesMetadata: data });
-  };
-
-  setAllSelected = value => {
-    this.setState({ allSelected: value });
-  };
-
-  setMoreThanOneSelected = value => {
-    this.setState({ moreThanOneSelected: value });
-  };
-
-  setOneSelected = value => {
-    this.setState({ oneSelected: value });
-  };
-
-  render() {
-    const { classes } = this.props;
-
-    ipc.on('selected-files', (event, fileData) => {
-      this.setLoadedFiles(fileData);
-    });
-
-    ipc.on('selected-image', (event, paths) => {
-      this.setLoadedImage(paths);
-    });
-
-    return (
+  return (
+    <AlertProvider template={AlertTemplate} {...alertOptions}>
       <MuiThemeProvider theme={theme}>
-        <FilesProvider value={this.state}>
-          <div className={classes.root}>
-            <StickyContainer>
-              <Sticky>{({ style }) => <AppMenu style={style} />}</Sticky>
-              <Layout />
-            </StickyContainer>
-          </div>
-        </FilesProvider>
+        <Alerts />
+        <div className={classes.root}>
+          <StickyContainer>
+            <Sticky>{({ style }) => <AppMenu style={style} />}</Sticky>
+            <Layout />
+          </StickyContainer>
+        </div>
       </MuiThemeProvider>
-    );
-  }
-}
+    </AlertProvider>
+  );
+};
+
+App.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
 
 export default withStyles(styles)(App);

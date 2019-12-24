@@ -1,107 +1,93 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import { useSelector, useDispatch } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import FormControl from '@material-ui/core/FormControl';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
-
-const allEqual = arr => arr.every(v => v === arr[0]);
+import { SET_ALBUM_ARTIST_VALUE, SET_WORKING_METADATA } from '../actions/types';
 
 const styles = theme => ({
   formControl: {
-    margin: theme.spacing.unit,
+    margin: theme.spacing(),
     width: '96%',
   },
 });
 
-class AttributeInput extends React.Component {
-  handleBlur = (fieldName, event, filesContext, setFieldValue) => {
-    const { filesMetadata } = filesContext;
-    filesMetadata.forEach(data => {
-      const newValue = event.target.value;
-      if (data.selected) {
+const AttributeInput = ({ classes, type, filesLoaded, oneSelected, moreThanOneSelected, allSelected }) => {
+  const dispatch = useDispatch();
+  const metadata = useSelector(state => state.inputActions.workingMetadata);
+  const inputState = useSelector(state => state.inputActions);
+
+  const handleBlur = (fieldName, event) => {
+    // copy fields to working metadata
+    const newValue = event.target.value;
+    const selectedIds = inputState.selectedIds;
+    metadata.forEach(data => {
+      if (selectedIds.includes(data._id)) {
         data[fieldName] = newValue;
         if (fieldName === 'artist' && data.albumArtist.length === 0) {
           data.albumArtist = newValue;
-          setFieldValue('albumArtist', newValue);
+          dispatch({ type: SET_ALBUM_ARTIST_VALUE, payload: newValue });
         }
       }
     });
-    filesContext.setMetadata(filesMetadata);
-    setFieldValue(fieldName, event.target.value);
-  };
-
-  handleChange = (fieldName, event, setFieldValue) => {
-    setFieldValue(fieldName, event.target.value);
-  };
-
-  valueText = (fieldName, moreThanOneSelected, oneSelected, filesContext, getFieldValue) => {
-    const multipleSelected = '(multiple selected)';
-    const multipleEntries = '(multiple entries)';
-    const { filesMetadata } = filesContext;
-    if (fieldName === 'title') {
-      if (moreThanOneSelected) {
-        return multipleSelected;
-      } else if (oneSelected) {
-        return getFieldValue(fieldName);
-      } else if (!oneSelected && !moreThanOneSelected) {
-        return '';
-      }
+    let actionStr;
+    if (fieldName === 'albumArtist') {
+      actionStr = `SET_ALBUM_ARTIST_VALUE`;
     } else {
-      if (oneSelected || moreThanOneSelected) {
-        return getFieldValue(fieldName);
-      } else if (!oneSelected && !moreThanOneSelected) {
-        const collectedFields = [];
-        filesMetadata.forEach(d => {
-          collectedFields.push(d[fieldName]);
-        });
-        if (allEqual(collectedFields)) {
-          return collectedFields[0];
-        } else {
-          return multipleEntries;
-        }
-      } else {
-        return fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
-      }
+      actionStr = `SET_${fieldName.toUpperCase()}_VALUE`;
     }
+    dispatch({ type: actionStr, payload: newValue });
+    dispatch({ type: SET_WORKING_METADATA, payload: metadata });
   };
 
-  render() {
-    const {
-      classes,
-      type,
-      filesLoaded,
-      oneSelected,
-      moreThanOneSelected,
-      allSelected,
-      placeholderText,
-      setFieldValue,
-      getFieldValue,
-      filesContext,
-    } = this.props;
-    const label = type.charAt(0).toUpperCase() + type.slice(1);
-    let disabled;
-    if (type === 'title') {
-      disabled = !filesLoaded || !oneSelected || allSelected || moreThanOneSelected;
+  const handleChange = (fieldName, event) => {
+    let actionStr;
+    if (fieldName === 'albumArtist') {
+      actionStr = `SET_ALBUM_ARTIST_VALUE`;
     } else {
-      disabled = !filesLoaded || !oneSelected;
+      actionStr = `SET_${fieldName.toUpperCase()}_VALUE`;
     }
-    const value = this.valueText(type, moreThanOneSelected, oneSelected, filesContext, getFieldValue);
-    return (
-      <FormControl className={classes.formControl}>
-        <InputLabel htmlFor="component-simple" shrink>
-          {label}
-        </InputLabel>
-        <Input
-          placeholder={placeholderText}
-          disabled={disabled}
-          id="component-simple"
-          value={value}
-          onChange={event => this.handleChange(type, event, setFieldValue)}
-          onBlur={event => this.handleBlur(type, event, filesContext, setFieldValue)}
-        />
-      </FormControl>
-    );
+    dispatch({ type: actionStr, payload: event.target.value });
+  };
+
+  const valueText = fieldName => {
+    const valString = `${fieldName}Value`;
+    return inputState[valString];
+  };
+
+  const label = type.charAt(0).toUpperCase() + type.slice(1);
+  let disabled = false;
+  if (type === 'title') {
+    disabled = !filesLoaded || !oneSelected || allSelected || moreThanOneSelected;
+  } else {
+    disabled = !filesLoaded || !oneSelected;
   }
-}
+  const value = valueText(type);
+  return (
+    <FormControl className={classes.formControl}>
+      <InputLabel htmlFor="component-simple" shrink>
+        {label}
+      </InputLabel>
+      <Input
+        disabled={disabled}
+        id="component-simple"
+        value={value}
+        onChange={event => handleChange(type, event)}
+        onBlur={event => handleBlur(type, event)}
+      />
+    </FormControl>
+  );
+};
+
+AttributeInput.propTypes = {
+  classes: PropTypes.object.isRequired,
+  type: PropTypes.string.isRequired,
+  filesLoaded: PropTypes.bool.isRequired,
+  oneSelected: PropTypes.bool.isRequired,
+  moreThanOneSelected: PropTypes.bool.isRequired,
+  allSelected: PropTypes.bool.isRequired,
+};
 
 export default withStyles(styles)(AttributeInput);

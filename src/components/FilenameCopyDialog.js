@@ -10,8 +10,8 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 
 const styles = theme => ({
   textField: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
+    marginLeft: theme.spacing(),
+    marginRight: theme.spacing(),
     width: 350,
   },
   startAdornment: {
@@ -19,7 +19,7 @@ const styles = theme => ({
   },
 });
 
-const FilenameCopyDialog = ({ open, handleClose, filesContext, classes }) => {
+const FilenameCopyDialog = ({ open, handleClose, classes }) => {
   const [regexp, setRegExp] = useState('\\d\\d - (.*).mp3');
 
   const reset = () => {
@@ -51,7 +51,7 @@ const FilenameCopyDialog = ({ open, handleClose, filesContext, classes }) => {
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => handleClose(regexp, filesContext)} color="primary">
+        <Button onClick={() => handleClose(regexp)} color="primary">
           Apply
         </Button>
       </DialogActions>

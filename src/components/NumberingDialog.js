@@ -7,7 +7,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 
-const NumberingDialog = ({ open, handleClose, filesContext }) => {
+const NumberingDialog = ({ open, handleClose }) => {
   const [storeLeadingZeros, setStoreLeadingZeros] = useState(false);
   const [storeTrackCount, setStoreTrackCount] = useState(false);
 
@@ -34,7 +34,7 @@ const NumberingDialog = ({ open, handleClose, filesContext }) => {
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => handleClose(storeZeros, storeTracks, filesContext)} color="primary">
+        <Button onClick={() => handleClose(storeZeros, storeTracks)} color="primary">
           Apply
         </Button>
       </DialogActions>

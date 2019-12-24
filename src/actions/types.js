@@ -1,0 +1,20 @@
+export const CREATE_MESSAGE = 'CREATE MESSAGE';
+// filename dialogs actions
+export const SET_FILENAME_DIALOG = 'SET_FILENAME_DIALOG';
+export const SET_NUMBERING_DIALOG = 'SET_NUMBERING_DIALOG';
+// files actions
+export const SET_FILES_LOADED = 'SET_FILES_LOADED';
+export const SET_FILE_PATHS = 'SET_FILE_PATHS';
+export const SET_FILES_METADATA = 'SET_FILES_METADATA';
+// input actions
+export const CLEAR_DATA = 'CLEAR_DATA';
+export const SET_WORKING_METADATA = 'SET_WORKING_METADATA';
+export const SET_TITLE_VALUE = 'SET_TITLE_VALUE';
+export const SET_ARTIST_VALUE = 'SET_ARTIST_VALUE';
+export const SET_ALBUM_ARTIST_VALUE = 'SET_ALBUM_ARTIST_VALUE';
+export const SET_ALBUM_VALUE = 'SET_ALBUM_VALUE';
+export const SET_GENRE_VALUE = 'SET_GENRE_VALUE';
+export const SET_YEAR_VALUE = 'SET_YEAR_VALUE';
+export const SET_COMMENT_VALUE = 'SET_COMMENT_VALUE';
+export const SET_SELECTED_SONG = 'SET_SELECTED_SONG';
+export const SET_ALL_SELECTED = 'SET_ALL_SELECTED';
