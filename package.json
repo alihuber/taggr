@@ -1,15 +1,14 @@
 {
-  "name": "electron-react-boilerplate",
+  "name": "taggr",
   "version": "0.0.2",
-  "description": "ElectronJS with ReactJS & MUI boilerplate",
+  "description": "",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\"",
-    "test": "jest --coverage",
-    "debug-test": "node --inspect-brk node_modules/.bin/jest --runInBand"
+    "test": "echo \"No testing configured\""
   },
   "productName": "taggr",
   "main": ".webpack/main",
@@ -49,7 +48,6 @@
     "react-flexbox-grid": "^2.1.2",
     "react-redux": "^7.1.3",
     "react-sticky": "^6.0.3",
-    "react-test-renderer": "^16.12.0",
     "redux": "^4.0.4",
     "redux-devtools-extension": "^2.13.8",
     "redux-thunk": "^2.3.0",

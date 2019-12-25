@@ -20,7 +20,7 @@ const DOMAIN = 'http://192.168.178.67:8000';
 const suffix = process.platform === 'darwin' ? `/RELEASES.json?method=JSON&version=${app.getVersion()}` : '';
 if (!dev) {
   autoUpdater.setFeedURL({
-    url: `${DOMAIN}/electron-react-boilerplate/e144139231850cb25e2e147ce708e409/${process.platform}/${process.arch}${suffix}`,
+    url: `${DOMAIN}/taggr/e144139231850cb25e2e147ce708e409/${process.platform}/${process.arch}${suffix}`,
     serverType: 'json',
   });
 
