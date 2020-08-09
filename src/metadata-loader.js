@@ -1,7 +1,7 @@
 const fs = require('fs');
 const last = require('lodash').last;
 const ID3Parser = require('id3-parser');
-const uuidv4 = require('uuid/v4');
+const { v4: uuidv4 } = require('uuid');
 
 const _loadMetadata = filePaths => {
   const metadata = [];
