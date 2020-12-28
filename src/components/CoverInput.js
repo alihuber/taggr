@@ -7,7 +7,6 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import cloneDeep from 'lodash/cloneDeep';
-import map from 'lodash/map';
 import { SET_WORKING_METADATA } from '../actions/types';
 
 const styles = theme => ({

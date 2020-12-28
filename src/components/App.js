@@ -5,7 +5,6 @@ import { withStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import { StickyContainer, Sticky } from 'react-sticky';
-import Button from '@material-ui/core/Button';
 import { Provider as AlertProvider } from 'react-alert';
 import AlertTemplate from 'react-alert-template-basic';
 import Alerts from './layout/Alerts';

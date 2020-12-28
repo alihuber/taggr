@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import cloneDeep from 'lodash/cloneDeep';
 import AttributeInput from './AttributeInput';
 
